@@ -1,0 +1,26 @@
+﻿Build started 23/02/2023 10:31:56.
+Logging verbosity is set to: Normal.     1>Project "C:\Uni\COMP3015\Project_Template\Project_Template.vcxproj" on node 2 (Build target(s)).
+     1>InitializeBuildStatus:
+         Creating "x64\Debug\Project_Template.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.34.31933\bin\HostX64\x64\CL.exe /c /ZI /JMC /nologo /W3 /WX- /diagnostics:column /sdl /Od /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /permissive- /Fo"x64\Debug\\" /Fd"x64\Debug\vc143.pdb" /external:W3 /Gd /TP /FC /errorReport:prompt main.cpp
+         main.cpp
+         All outputs are up-to-date.
+       Link:
+         C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.34.31933\bin\HostX64\x64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Uni\COMP3015\Project_Template\x64\Debug\Project_Template.exe" /INCREMENTAL /ILK:"x64\Debug\Project_Template.ilk" /NOLOGO glfw3.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Uni\COMP3015\Project_Template\x64\Debug\Project_Template.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Uni\COMP3015\Project_Template\x64\Debug\Project_Template.lib" /MACHINE:X64 x64\Debug\errorhandling.obj
+         x64\Debug\glad.obj
+         x64\Debug\glslprogram.obj
+         x64\Debug\glutils.obj
+         x64\Debug\main.obj
+         x64\Debug\scenebasic_uniform.obj
+         Project_Template.vcxproj -> C:\Uni\COMP3015\Project_Template\x64\Debug\Project_Template.exe
+       FinalizeBuildStatus:
+         Deleting file "x64\Debug\Project_Template.tlog\unsuccessfulbuild".
+         Touching "x64\Debug\Project_Template.tlog\Project_Template.lastbuildstate".
+     1>Done Building Project "C:\Uni\COMP3015\Project_Template\Project_Template.vcxproj" (Build target(s)).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.79
