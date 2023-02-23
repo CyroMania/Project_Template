@@ -1,10 +1,13 @@
-﻿Build started 23/02/2023 11:14:40.
+﻿Build started 23/02/2023 12:07:50.
 Logging verbosity is set to: Normal.     1>Project "C:\Uni\COMP3015\Project_Template\Project_Template.vcxproj" on node 2 (Build target(s)).
      1>InitializeBuildStatus:
          Touching "x64\Debug\Project_Template.tlog\unsuccessfulbuild".
        ClCompile:
-         C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.34.31933\bin\HostX64\x64\CL.exe /c /ZI /JMC /nologo /W3 /WX- /diagnostics:column /sdl /Od /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /permissive- /Fo"x64\Debug\\" /Fd"x64\Debug\vc143.pdb" /external:W3 /Gd /TP /FC /errorReport:prompt helper\trianglemesh.cpp
-         trianglemesh.cpp
+         C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.34.31933\bin\HostX64\x64\CL.exe /c /ZI /JMC /nologo /W3 /WX- /diagnostics:column /sdl /Od /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /permissive- /Fo"x64\Debug\\" /Fd"x64\Debug\vc143.pdb" /external:W3 /Gd /TP /FC /errorReport:prompt scenebasic_uniform.cpp
+         scenebasic_uniform.cpp
+     1>C:\Uni\COMP3015\Project_Template\scenebasic_uniform.cpp(94,5): warning C4551: function call missing argument list
+     1>C:\Uni\COMP3015\Project_Template\scenebasic_uniform.cpp(97,5): warning C4551: function call missing argument list
+     1>C:\Uni\COMP3015\Project_Template\scenebasic_uniform.cpp(98,5): warning C4551: function call missing argument list
          All outputs are up-to-date.
        Link:
          C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.34.31933\bin\HostX64\x64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Uni\COMP3015\Project_Template\x64\Debug\Project_Template.exe" /INCREMENTAL /ILK:"x64\Debug\Project_Template.ilk" /NOLOGO glfw3.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Uni\COMP3015\Project_Template\x64\Debug\Project_Template.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Uni\COMP3015\Project_Template\x64\Debug\Project_Template.lib" /MACHINE:X64 x64\Debug\errorhandling.obj
@@ -22,7 +25,14 @@ Logging verbosity is set to: Normal.     1>Project "C:\Uni\COMP3015\Project_Temp
      1>Done Building Project "C:\Uni\COMP3015\Project_Template\Project_Template.vcxproj" (Build target(s)).
 
 Build succeeded.
-    0 Warning(s)
+
+       "C:\Uni\COMP3015\Project_Template\Project_Template.vcxproj" (Build target) (1) ->
+       (ClCompile target) -> 
+         C:\Uni\COMP3015\Project_Template\scenebasic_uniform.cpp(94,5): warning C4551: function call missing argument list
+         C:\Uni\COMP3015\Project_Template\scenebasic_uniform.cpp(97,5): warning C4551: function call missing argument list
+         C:\Uni\COMP3015\Project_Template\scenebasic_uniform.cpp(98,5): warning C4551: function call missing argument list
+
+    3 Warning(s)
     0 Error(s)
 
-Time Elapsed 00:00:00.65
+Time Elapsed 00:00:02.15
