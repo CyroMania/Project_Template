@@ -2,11 +2,14 @@
 #define SCENEBASIC_UNIFORM_H
 
 #include "helper/scene.h"
+#include "helper/torus.h"
 
 #include <glad/glad.h>
 #include "helper/glslprogram.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/glm.hpp>
+
 
 
 class SceneBasic_Uniform : public Scene
