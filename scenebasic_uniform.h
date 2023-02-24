@@ -10,15 +10,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
 
-
-
 class SceneBasic_Uniform : public Scene
 {
 private:
-    GLuint vaoHandle;
+    Torus torus;
     GLSLProgram prog;
-    float angle;
-    glm::mat4 RotationMatrix;
+    glm::mat4 Kd;
+    glm::mat4 Ld;
+    glm::mat4 LightPosition;
 
     void compile();
 
@@ -29,6 +28,7 @@ public:
     void update( float t );
     void render();
     void resize(int, int);
+    void setMatrices();
 };
 
 #endif // SCENEBASIC_UNIFORM_H
