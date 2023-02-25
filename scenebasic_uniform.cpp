@@ -52,6 +52,7 @@ void SceneBasic_Uniform::compile()
 
 void SceneBasic_Uniform::update( float t )
 {
+    model = glm::rotate(model, glm::radians(-1.0f), vec3(1.0f, 1.0f, 1.0f));
 }
 
 void SceneBasic_Uniform::render()
