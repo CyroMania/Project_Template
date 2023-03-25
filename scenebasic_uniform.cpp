@@ -15,11 +15,14 @@ using std::endl;
 
 #include <glm/gtc/matrix_transform.hpp>
 using glm::vec3;
+using glm::vec4;
+using glm::mat3;
 using glm::mat4;
 
 //SceneBasic_Uniform::SceneBasic_Uniform() : torus(0.7f, 0.3f, 30, 30) {}
 //SceneBasic_Uniform::SceneBasic_Uniform() : teapot(50, glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f))) {}
-SceneBasic_Uniform::SceneBasic_Uniform() : plane(10.0f, 10.0f, 100, 100) 
+//SceneBasic_Uniform::SceneBasic_Uniform() : plane(50.0f, 50.0f, 1, 1)
+SceneBasic_Uniform::SceneBasic_Uniform() : plane(50.0f, 50.0f, 1, 1), teapot(14, glm::mat4(1.0f)), torus(1.75f*1.75f,0.75f, 50, 50) 
 {
 	mesh = ObjMesh::load("../Project_Template/media/pig_triangulated.obj", true);
 }
