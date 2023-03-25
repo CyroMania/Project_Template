@@ -36,3 +36,5 @@
 /*.pdb
 /*.idb
 /*.ilk
+
+ /x64/Debug/*
