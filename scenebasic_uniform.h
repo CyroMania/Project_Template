@@ -3,6 +3,7 @@
 
 #include "helper/scene.h"
 #include "helper/torus.h"
+#include "helper/teapot.h"
 
 #include <glad/glad.h>
 #include "helper/glslprogram.h"
@@ -13,7 +14,8 @@
 class SceneBasic_Uniform : public Scene
 {
 private:
-    Torus torus;
+    //Torus torus;
+    Teapot teapot;
     GLSLProgram prog;
     glm::mat4 Kd;
     glm::mat4 Ld;
