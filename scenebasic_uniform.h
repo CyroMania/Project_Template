@@ -2,8 +2,10 @@
 #define SCENEBASIC_UNIFORM_H
 
 #include "helper/scene.h"
-#include "helper/torus.h"
-#include "helper/teapot.h"
+//#include "helper/torus.h"
+//#include "helper/teapot.h"
+#include "helper/plane.h"
+#include "helper/objmesh.h"
 
 #include <glad/glad.h>
 #include "helper/glslprogram.h"
@@ -15,7 +17,9 @@ class SceneBasic_Uniform : public Scene
 {
 private:
     //Torus torus;
-    Teapot teapot;
+    //Teapot teapot;
+    Plane plane;
+    std::unique_ptr<ObjMesh> mesh;
     GLSLProgram prog;
     glm::mat4 Kd;
     glm::mat4 Ld;

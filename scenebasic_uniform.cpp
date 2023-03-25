@@ -18,7 +18,11 @@ using glm::vec3;
 using glm::mat4;
 
 //SceneBasic_Uniform::SceneBasic_Uniform() : torus(0.7f, 0.3f, 30, 30) {}
-SceneBasic_Uniform::SceneBasic_Uniform() : teapot(50, glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f))) {}
+//SceneBasic_Uniform::SceneBasic_Uniform() : teapot(50, glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f))) {}
+SceneBasic_Uniform::SceneBasic_Uniform() : plane(10.0f, 10.0f, 100, 100) 
+{
+	mesh = ObjMesh::load("../Project_Template/media/pig_triangulated.obj", true);
+}
 
 void SceneBasic_Uniform::initScene()
 {
@@ -27,10 +31,10 @@ void SceneBasic_Uniform::initScene()
 	glEnable(GL_DEPTH_TEST);
 
 	model = mat4(1.0f);
-	model = glm::rotate(model, glm::radians(270.0f), vec3(1.0f, 0.0f, 0.0f));
-	view = glm::lookAt(vec3(-1.0f, 5.0f, 5.0f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.1f, 0.0f));
-
+	model = glm::rotate(model, glm::radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
+	view = glm::lookAt(vec3(1.5f, 0.5f, 0.5f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 	projection = mat4(1.0f);
+
 	float x, z;
 	for (int i = 0; i < 3; i++)
 	{
@@ -86,7 +90,7 @@ void SceneBasic_Uniform::render()
 	GlCall(glClear(GL_DEPTH_BUFFER_BIT));
 
 	setMatrices();
-	teapot.render();
+	mesh->render();
 }
 
 void SceneBasic_Uniform::resize(int w, int h)
