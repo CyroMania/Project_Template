@@ -5,9 +5,21 @@ layout (location = 1) in vec3 VertexNormal;
 
 out vec3 LightIntensity;
 
-uniform vec3 Kd;
-uniform vec3 Ld;
-uniform vec4 LightPosition;
+uniform struct LightInfo {
+    vec4 Position;
+    vec3 La; //ambient
+    vec3 Ld; //diffuse
+    vec3 Ls; //specular
+} Light;
+
+uniform struct MaterialInfo {
+    vec3 Ka; //ambient
+    vec3 Kd; //diffuse
+    vec3 Ks; //specular
+    float Shininess; //shininess factor
+} Material; 
+
+
 uniform mat4 ModelViewMatrix;
 uniform mat3 NormalMatrix;
 uniform mat4 MVP;
@@ -15,9 +27,23 @@ uniform mat4 MVP;
 
 void main()
 {
-    vec3 n = normalize( NormalMatrix * VertexNormal);
+    vec3 n = normalize(NormalMatrix * VertexNormal);
     vec4 pos = ModelViewMatrix * vec4(VertexPosition, 1.0);
-    vec3 s = normalize(vec3(LightPosition-pos));
-    LightIntensity = Kd*Ld*dot(s,n);
+
+    vec3 ambient = Light.La * Material.Ka;
+
+    vec3 s = normalize(vec3(Light.Position-pos));
+    float sDotN = max(dot(s,n),0.0);
+    vec3 diffuse = Light.Ld * Material.Kd*sDotN;
+    vec3 specular = vec3(0.0);
+    if (sDotN > 0.0) {
+        vec3 v = normalize(-pos.xyz);
+        vec3 r = reflect(-s, n);
+        specular = Light.Ls * Material.Ks * pow(max(dot(r,v),0.0),Material.Shininess);
+    }
+
+    LightIntensity = ambient + diffuse + specular;
+
+
     gl_Position = MVP*vec4(VertexPosition, 1.0);
 }
