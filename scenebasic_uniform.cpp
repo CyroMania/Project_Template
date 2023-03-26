@@ -29,18 +29,18 @@ SceneBasic_Uniform::SceneBasic_Uniform() : plane(50.0f, 50.0f, 1, 1), teapot(14,
 
 void SceneBasic_Uniform::initScene()
 {
-	compile();
+	angle = 0.0;
 
+	compile();
 	glEnable(GL_DEPTH_TEST);
-	//model = mat4(1.0f);
-	//model = glm::rotate(model, glm::radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
+
 	view = glm::lookAt(vec3(5.0f, 5.0f, 7.5f), vec3(0.0f, 0.75f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 	projection = mat4(1.0f);
 	prog.setUniform("Spot.Ld", vec3(0.9f));
 	prog.setUniform("Spot.Ls", vec3(0.9f));
 	prog.setUniform("Spot.La", vec3(0.5f));
 	prog.setUniform("Spot.Exponent", 50.0f);
-	prog.setUniform("Spot.Cutoff", glm::radians(15.0f));
+	prog.setUniform("Spot.Cutoff", glm::radians(20.0f));
 }
 
 void SceneBasic_Uniform::compile()
@@ -59,20 +59,27 @@ void SceneBasic_Uniform::compile()
 
 void SceneBasic_Uniform::update(float t)
 {
-	//model = glm::rotate(model, glm::radians(-1.0f), vec3(1.0f, 1.0f, 1.0f));
+	float deltaT = t - tPrev;
+	if (tPrev == 0.0f)
+		deltaT = 0.0f;
+	tPrev = t;
+	angle += 0.25f * deltaT;
+	if (angle > glm::two_pi<float>()) {
+		angle -= glm::two_pi<float>();
+	}
 }
 
 void SceneBasic_Uniform::render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	vec4 lightPos = vec4(0.0f, 10.0f, 0.0f, 1.0f);
+	vec4 lightPos = vec4(10.0f * cos(angle), 10.0f, 10.0f * sin(angle), 1.0f);
 	prog.setUniform("Spot.Position", vec4(view * lightPos));
 	mat3 normalMatrix = mat3(vec3(view[0]), vec3(view[1]), vec3(view[2]));
 	prog.setUniform("Spot.Direction", normalMatrix * vec3(-lightPos));
 
 	prog.setUniform("Material.Kd", 0.2f, 0.55f, 0.9f);
 	prog.setUniform("Material.Ks", 0.95f, 0.95f, 0.95f);
-	prog.setUniform("Material.Ka", 0.2f * 0.3f, 0.55f * 0.3f, 0.9f * 0.3f);
+	prog.setUniform("Material.Ka", 0.2f * 0.4f, 0.55f * 0.4f, 0.9f * 0.4f);
 	prog.setUniform("Material.Shininess", 100.0f);
 
 	model = mat4(1.0f);
@@ -84,7 +91,7 @@ void SceneBasic_Uniform::render()
 
 	prog.setUniform("Material.Kd", 0.2f, 0.55f, 0.9f);
 	prog.setUniform("Material.Ks", 0.95f, 0.95f, 0.95f); 
-	prog.setUniform("Material.Ka", 0.2f * 0.3f, 0.55f * 0.3f, 0.9f * 0.3f);
+	prog.setUniform("Material.Ka", 0.2f * 0.4f, 0.55f * 0.4f, 0.9f * 0.4f);
 	prog.setUniform("Material.Shininess", 100.0f);
 
 	model = mat4(1.0f);

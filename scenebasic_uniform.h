@@ -21,9 +21,8 @@ private:
     Plane plane;
     //std::unique_ptr<ObjMesh> mesh;
     GLSLProgram prog;
-    glm::mat4 Kd;
-    glm::mat4 Ld;
-    glm::mat4 LightPosition;
+    float tPrev;
+    float angle;
 
     void compile();
 
