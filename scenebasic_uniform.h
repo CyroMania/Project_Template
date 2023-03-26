@@ -16,9 +16,11 @@
 class SceneBasic_Uniform : public Scene
 {
 private:
-    Torus torus;
+    //Torus torus;
     Teapot teapot;
     Plane plane;
+    float angle;
+    float tPrev;
     std::unique_ptr<ObjMesh> mesh;
     GLSLProgram prog;
     glm::mat4 Kd;
