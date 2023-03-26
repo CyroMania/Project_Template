@@ -185,6 +185,22 @@
     <ClInclude Include="helper\utils.h" />
     <ClInclude Include="scenebasic_uniform.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="media\texture\ao_ears.png" />
+    <Image Include="media\texture\bluewater.png" />
+    <Image Include="media\texture\brick1.jpg" />
+    <Image Include="media\texture\cement.jpg" />
+    <Image Include="media\texture\fire.png" />
+    <Image Include="media\texture\flower.png" />
+    <Image Include="media\texture\hardwood2_diffuse.jpg" />
+    <Image Include="media\texture\hardwood2_roughness.jpg" />
+    <Image Include="media\texture\me_textile.png" />
+    <Image Include="media\texture\moss.png" />
+    <Image Include="media\texture\ogre_diffuse.png" />
+    <Image Include="media\texture\ogre_normalmap.png" />
+    <Image Include="media\texture\smoke.png" />
+    <Image Include="media\texture\star.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

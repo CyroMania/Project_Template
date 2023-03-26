@@ -1,7 +1,9 @@
 #version 440
 
-layout (binding = 0) uniform sampler2D Tex1;
 layout (location = 0) out vec4 FragColor;
+
+layout (binding = 0) uniform sampler2D Tex1;
+layout (binding = 1) uniform sampler2D Tex2;
 
 in vec4 Position;
 in vec3 Normal;
@@ -39,7 +41,9 @@ vec3 phong(vec3 n, vec4 pos) {
 }
 
 vec3 blinnPhong(vec3 n, vec4 pos) {
-    vec3 texColour = texture(Tex1,TexCoord).rgb;
+    vec4 brickColour = texture(Tex1, TexCoord);
+    vec4 mossColour = texture(Tex2, TexCoord);
+    vec3 mixedColour = mix(brickColour.rgb, mossColour.rgb, mossColour.a);
 
     vec3 ambient = Light.La * Material.Ka;
     vec3 diffuse = vec3(0.0);
@@ -47,7 +51,7 @@ vec3 blinnPhong(vec3 n, vec4 pos) {
     vec3 s = normalize(vec3(Light.Position-(pos*Light.Position.w)));
 
     float sDotN = max(dot(s,n),0.0);
-    diffuse = Light.Ld * Material.Kd * sDotN * texColour;
+    diffuse = Light.Ld * Material.Kd * sDotN * mixedColour;
 
     if (sDotN > 0.0) {
         vec3 v = normalize(-pos.xyz);

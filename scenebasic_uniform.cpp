@@ -54,9 +54,13 @@ void SceneBasic_Uniform::initScene()
 	prog.setUniform("Light.Ld", vec3(1.0f));
 	prog.setUniform("Light.La", vec3(0.2f));
 
-	unsigned int texID = Texture::loadTexture("media/texture/brick1.jpg");
+	//loading separate textures
+	unsigned int tex1 = Texture::loadTexture("media/texture/brick1.jpg");
+	unsigned int tex2 = Texture::loadTexture("media/texture/moss.png");
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texID);
+	glBindTexture(GL_TEXTURE_2D, tex1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, tex2);
 }
 
 void SceneBasic_Uniform::compile()
@@ -93,7 +97,7 @@ void SceneBasic_Uniform::render()
 	mat3 normalMatrix = mat3(vec3(view[0]), vec3(view[1]), vec3(view[2]));
 
 	prog.setUniform("Material.Kd", vec3(0.7f, 0.7f, 0.7f));
-	prog.setUniform("Material.Ka", vec3(0.9f, 0.9f, 0.9f));
+	prog.setUniform("Material.Ka", vec3(0.95f, 0.95f, 0.95f));
 	prog.setUniform("Material.Ks", vec3(0.2f, 0.2f, 0.2f));
 	prog.setUniform("Material.Shininess", 100.0f);
 	model = mat4(1.0f);

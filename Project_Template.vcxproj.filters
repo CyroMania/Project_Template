@@ -137,4 +137,48 @@
       <Filter>helper</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="media\texture\ao_ears.png">
+      <Filter>media</Filter>
+    </Image>
+    <Image Include="media\texture\bluewater.png">
+      <Filter>media</Filter>
+    </Image>
+    <Image Include="media\texture\brick1.jpg">
+      <Filter>media</Filter>
+    </Image>
+    <Image Include="media\texture\cement.jpg">
+      <Filter>media</Filter>
+    </Image>
+    <Image Include="media\texture\fire.png">
+      <Filter>media</Filter>
+    </Image>
+    <Image Include="media\texture\flower.png">
+      <Filter>media</Filter>
+    </Image>
+    <Image Include="media\texture\hardwood2_diffuse.jpg">
+      <Filter>media</Filter>
+    </Image>
+    <Image Include="media\texture\hardwood2_roughness.jpg">
+      <Filter>media</Filter>
+    </Image>
+    <Image Include="media\texture\me_textile.png">
+      <Filter>media</Filter>
+    </Image>
+    <Image Include="media\texture\moss.png">
+      <Filter>media</Filter>
+    </Image>
+    <Image Include="media\texture\ogre_diffuse.png">
+      <Filter>media</Filter>
+    </Image>
+    <Image Include="media\texture\ogre_normalmap.png">
+      <Filter>media</Filter>
+    </Image>
+    <Image Include="media\texture\smoke.png">
+      <Filter>media</Filter>
+    </Image>
+    <Image Include="media\texture\star.png">
+      <Filter>media</Filter>
+    </Image>
+  </ItemGroup>
 </Project>
