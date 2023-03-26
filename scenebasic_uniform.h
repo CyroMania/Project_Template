@@ -6,6 +6,7 @@
 #include "helper/teapot.h"
 #include "helper/plane.h"
 #include "helper/objmesh.h"
+#include "helper/cube.h"
 
 #include <glad/glad.h>
 #include "helper/glslprogram.h"
@@ -13,19 +14,17 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
 
+
 class SceneBasic_Uniform : public Scene
 {
 private:
-    //Torus torus;
-    Teapot teapot;
+    GLSLProgram prog;
+
+    Cube cube;
     Plane plane;
+
     float angle;
     float tPrev;
-    std::unique_ptr<ObjMesh> mesh;
-    GLSLProgram prog;
-    glm::mat4 Kd;
-    glm::mat4 Ld;
-    glm::mat4 LightPosition;
 
     void compile();
 
