@@ -20,12 +20,12 @@ class SceneBasic_Uniform : public Scene
 private:
     GLSLProgram prog;
 
-    Cube cube;
-    Plane plane;
+    //Cube cube;
+    //Plane plane;
 
     float angle;
     float tPrev;
-
+    std::unique_ptr<ObjMesh> ogre;
     void compile();
 
 public:

@@ -23,16 +23,16 @@ using glm::mat4;
 //SceneBasic_Uniform::SceneBasic_Uniform() : torus(0.7f, 0.3f, 30, 30) {}
 //SceneBasic_Uniform::SceneBasic_Uniform() : teapot(50, glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f))) {}
 //SceneBasic_Uniform::SceneBasic_Uniform() : plane(50.0f, 50.0f, 1, 1)
-SceneBasic_Uniform::SceneBasic_Uniform() : angle(0.0), tPrev(0), plane(50.0f, 50.0f, 1, 1)
+SceneBasic_Uniform::SceneBasic_Uniform() : angle(0.0), tPrev(0) //plane(50.0f, 50.0f, 1, 1)
 {
-	//mesh = ObjMesh::load("../Project_Template/media/pig_triangulated.obj", true);
+	ogre = ObjMesh::load("media/bs_ears.obj", false, true);
 }
 
 void SceneBasic_Uniform::initScene()
 {
 	compile();
 	glEnable(GL_DEPTH_TEST);
-	view = glm::lookAt(vec3(1.0f, 1.25f, 1.25f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+	view = glm::lookAt(vec3(-1.0f, 0.25f, 2.0f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 	projection = mat4(1.0f);
 
 	// 3 Directional Light Uniforms
@@ -50,17 +50,17 @@ void SceneBasic_Uniform::initScene()
 	//prog.setUniform("Lights[2].Ls", vec3(0.8f, 0.0f, 0.0f));
 	//
 
-	prog.setUniform("Light.Ls", vec3(1.0f));
+	prog.setUniform("Light.Ls", vec3(0.6f));
 	prog.setUniform("Light.Ld", vec3(1.0f));
 	prog.setUniform("Light.La", vec3(0.2f));
 
 	//loading separate textures
-	unsigned int tex1 = Texture::loadTexture("media/texture/brick1.jpg");
-	unsigned int tex2 = Texture::loadTexture("media/texture/moss.png");
+	unsigned int colourTex = Texture::loadTexture("media/texture/ogre_diffuse.png");
+	unsigned int normalMapTex = Texture::loadTexture("media/texture/ogre_normalmap.png");
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, tex1);
+	glBindTexture(GL_TEXTURE_2D, colourTex);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, tex2);
+	glBindTexture(GL_TEXTURE_2D, normalMapTex);
 }
 
 void SceneBasic_Uniform::compile()
@@ -96,13 +96,13 @@ void SceneBasic_Uniform::render()
 	prog.setUniform("Light.Position", vec4(view * lightPos));
 	mat3 normalMatrix = mat3(vec3(view[0]), vec3(view[1]), vec3(view[2]));
 
-	prog.setUniform("Material.Kd", vec3(0.7f, 0.7f, 0.7f));
-	prog.setUniform("Material.Ka", vec3(0.95f, 0.95f, 0.95f));
-	prog.setUniform("Material.Ks", vec3(0.2f, 0.2f, 0.2f));
+	prog.setUniform("Material.Kd", vec3(1.0f, 1.0f, 1.0f));
+	prog.setUniform("Material.Ka", vec3(0.05f, 0.05f, 0.05f));
+	prog.setUniform("Material.Ks", vec3(0.5f, 0.5f, 0.5f));
 	prog.setUniform("Material.Shininess", 100.0f);
 	model = mat4(1.0f);
 	setMatrices();
-	cube.render();
+	ogre->render();
 	//prog.setUniform("Material.Kd", vec3(0.7f, 0.7f, 0.7f));
 	//prog.setUniform("Material.Ka", vec3(0.9f, 0.9f, 0.9f));
 	//prog.setUniform("Material.Ks", vec3(0.2f, 0.2f, 0.2f));
