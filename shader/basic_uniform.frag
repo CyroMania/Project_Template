@@ -62,10 +62,19 @@ vec3 blinnPhong(vec4 pos, vec3 n) {
 
 void main() {
     vec4 alphaMap = texture(AlphaTex, TexCoord).rgba;
-    if (alphaMap.a < 0.15) {
+    if (alphaMap.a < 0.15) 
+    {
         discard;
     }
-    else {
-        FragColour = vec4(blinnPhong(Position, normalize(Normal)), 1.0f);
+    else 
+    {
+        if (gl_FrontFacing) 
+        {
+            FragColour = vec4(blinnPhong(Position, normalize(Normal)), 1.0);
+        }
+        else
+        {
+            FragColour = vec4(blinnPhong(Position, normalize(-Normal)), 1.0);
+        }
     }
 }
