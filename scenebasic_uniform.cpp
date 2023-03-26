@@ -55,12 +55,12 @@ void SceneBasic_Uniform::initScene()
 	prog.setUniform("Light.La", vec3(0.2f));
 
 	//loading separate textures
-	unsigned int tex1 = Texture::loadTexture("media/texture/brick1.jpg");
-	unsigned int tex2 = Texture::loadTexture("media/texture/moss.png");
+	unsigned int baseTex = Texture::loadTexture("media/texture/brick1.jpg");
+	unsigned int alphaTex = Texture::loadTexture("media/texture/moss.png");
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, tex1);
+	glBindTexture(GL_TEXTURE_2D, baseTex);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, tex2);
+	glBindTexture(GL_TEXTURE_2D, alphaTex);
 }
 
 void SceneBasic_Uniform::compile()

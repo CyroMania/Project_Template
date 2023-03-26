@@ -1,9 +1,9 @@
 #version 440
 
-layout (location = 0) out vec4 FragColor;
+layout (location = 0) out vec4 FragColour;
 
-layout (binding = 0) uniform sampler2D Tex1;
-layout (binding = 1) uniform sampler2D Tex2;
+layout (binding = 0) uniform sampler2D BaseTex;
+layout (binding = 1) uniform sampler2D AlphaTex;
 
 in vec4 Position;
 in vec3 Normal;
@@ -23,7 +23,7 @@ uniform struct MaterialInfo {
     float Shininess; //shininess factor
 } Material; 
 
-vec3 phong(vec3 n, vec4 pos) {
+vec3 phong(vec4 pos, vec3 n) {
 
     vec3 ambient = Light.La * Material.Ka;
     vec3 s = normalize(vec3(Light.Position-pos*Light.Position.w));
@@ -40,10 +40,8 @@ vec3 phong(vec3 n, vec4 pos) {
     return ambient+diffuse+specular;
 }
 
-vec3 blinnPhong(vec3 n, vec4 pos) {
-    vec4 brickColour = texture(Tex1, TexCoord);
-    vec4 mossColour = texture(Tex2, TexCoord);
-    vec3 mixedColour = mix(brickColour.rgb, mossColour.rgb, mossColour.a);
+vec3 blinnPhong(vec4 pos, vec3 n) {
+    vec3 texColour = texture(BaseTex, TexCoord).rgb;
 
     vec3 ambient = Light.La * Material.Ka;
     vec3 diffuse = vec3(0.0);
@@ -51,7 +49,7 @@ vec3 blinnPhong(vec3 n, vec4 pos) {
     vec3 s = normalize(vec3(Light.Position-(pos*Light.Position.w)));
 
     float sDotN = max(dot(s,n),0.0);
-    diffuse = Light.Ld * Material.Kd * sDotN * mixedColour;
+    diffuse = Light.Ld * Material.Kd * sDotN * texColour;
 
     if (sDotN > 0.0) {
         vec3 v = normalize(-pos.xyz);
@@ -63,5 +61,11 @@ vec3 blinnPhong(vec3 n, vec4 pos) {
 }
 
 void main() {
-    FragColor = vec4(blinnPhong(Normal, Position), 1.0f);
+    vec4 alphaMap = texture(AlphaTex, TexCoord).rgba;
+    if (alphaMap.a < 0.15) {
+        discard;
+    }
+    else {
+        FragColour = vec4(blinnPhong(Position, normalize(Normal)), 1.0f);
+    }
 }
