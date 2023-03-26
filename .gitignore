@@ -31,10 +31,10 @@
 *.out
 *.app
 
-/.vs
-/*.tlog
-/*.pdb
-/*.idb
-/*.ilk
+.vs
+*.tlog
+*.pdb
+*.idb
+*.ilk
 
  x64/Debug/*
