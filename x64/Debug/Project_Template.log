@@ -1,4 +1,4 @@
-﻿Build started 26/03/2023 12:45:51.
+﻿Build started 26/03/2023 14:18:13.
 Logging verbosity is set to: Normal.     1>Project "C:\Uni\COMP3015\Project_Template\Project_Template.vcxproj" on node 2 (Build target(s)).
      1>InitializeBuildStatus:
          Creating "x64\Debug\Project_Template.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
@@ -19,6 +19,7 @@ Logging verbosity is set to: Normal.     1>Project "C:\Uni\COMP3015\Project_Temp
          x64\Debug\trianglemesh.obj
          x64\Debug\main.obj
          x64\Debug\scenebasic_uniform.obj
+         LINK : C:\Uni\COMP3015\Project_Template\x64\Debug\Project_Template.exe not found or not built by the last incremental link; performing full link
          Project_Template.vcxproj -> C:\Uni\COMP3015\Project_Template\x64\Debug\Project_Template.exe
        FinalizeBuildStatus:
          Deleting file "x64\Debug\Project_Template.tlog\unsuccessfulbuild".
@@ -34,4 +35,4 @@ Build succeeded.
     1 Warning(s)
     0 Error(s)
 
-Time Elapsed 00:00:01.94
+Time Elapsed 00:00:03.57

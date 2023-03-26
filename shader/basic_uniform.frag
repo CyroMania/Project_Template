@@ -21,7 +21,6 @@ uniform struct MaterialInfo {
 vec3 phong(vec3 n, vec4 pos) {
 
     vec3 ambient = Light.La * Material.Ka;
-
     vec3 s = normalize(vec3(Light.Position-pos*Light.Position.w));
 
     float sDotN = max(dot(s,n),0.0);
@@ -52,7 +51,7 @@ vec3 blinnPhong(vec3 n, vec4 pos) {
         specular = Light.Ls * Material.Ks * pow(max(dot(h,n),0.0),Material.Shininess);
     }
 
-    return ambient+diffuse+specular;
+    return ambient + diffuse + specular;
 }
 
 void main() {
