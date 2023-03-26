@@ -19,7 +19,7 @@ private:
     Torus torus;
     Teapot teapot;
     Plane plane;
-    std::unique_ptr<ObjMesh> mesh;
+    //std::unique_ptr<ObjMesh> mesh;
     GLSLProgram prog;
     glm::mat4 Kd;
     glm::mat4 Ld;
