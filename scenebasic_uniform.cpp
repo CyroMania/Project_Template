@@ -23,7 +23,7 @@ using glm::mat4;
 //SceneBasic_Uniform::SceneBasic_Uniform() : torus(0.7f, 0.3f, 30, 30) {}
 //SceneBasic_Uniform::SceneBasic_Uniform() : teapot(50, glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f))) {}
 //SceneBasic_Uniform::SceneBasic_Uniform() : plane(50.0f, 50.0f, 1, 1)
-SceneBasic_Uniform::SceneBasic_Uniform() : angle(0.0), tPrev(0), plane(50.0f, 50.0f, 1, 1), cameraZ(3.5f), movingForward(false)
+SceneBasic_Uniform::SceneBasic_Uniform() : teapot(50, glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f))), angle(0.0), tPrev(0), plane(50.0f, 50.0f, 1, 1), cameraZ(3.5f), movingForward(false)
 {
 	//mesh = ObjMesh::load("../Project_Template/media/pig_triangulated.obj", true);
 }
@@ -96,7 +96,7 @@ void SceneBasic_Uniform::update(float t)
 		movingForward = false;
 	}
 
-	if (cameraZ < 2.5f && !movingForward) {
+	if (cameraZ < 3.5f && !movingForward) {
 		view = glm::translate(view, vec3(0.0f, 0.0f, 0.01f));
 		cameraZ = view[3].z;
 	}
@@ -110,8 +110,8 @@ void SceneBasic_Uniform::render()
 {
 	GlCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-	vec4 lightPos = vec4(10.0f * cos(angle), 8.0f, 10.0f * sin(angle), 1.0f);
-	prog.setUniform("MainLight.Position", vec4(view * lightPos));
+	vec4 lightPos = vec4(8.0f * cos(angle), 8.0f, 8.0f * sin(angle), 1.0f);
+	prog.setUniform("MainLight.Position", vec4(lightPos));
 	mat3 normalMatrix = mat3(vec3(view[0]), vec3(view[1]), vec3(view[2]));
 
 	setDiffuseAmbientSpecular("Material", 0.7f, 0.95f, 0.2f);
@@ -129,6 +129,22 @@ void SceneBasic_Uniform::render()
 	model = glm::translate(model, vec3(0.0f, 0.0f, 0.0f));
 	setMatrices();
 	plane.render();
+
+	float specularScalar = 0.3f;
+	prog.setUniform("Material.Kd", vec3(0.2f, 0.5f, 0.8f));
+	prog.setUniform("Material.Ka", vec3(0.9f, 0.9f, 0.9f));
+	prog.setUniform("Material.Ks", vec3(0.2f * specularScalar, 0.55f * specularScalar, 0.9f * specularScalar));
+	prog.setUniform("Material.Shininess", 100.0f);
+	for (int i = 0; i < 4; i++)
+	{
+		model = glm::translate(mat4(1.0f), vec3((2.5f * (i % 2)) + 1.0f, 0.0f, -1.0f * i));
+		model = glm::scale(model, vec3(0.25f, 0.25f, 0.25f));
+		model = glm::rotate(model, glm::radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(180.0f * (i % 2)), vec3(0.0f, 0.0f, 1.0f));
+		setMatrices();
+		teapot.render();
+	}
+
 }
 
 void SceneBasic_Uniform::resize(int w, int h)
@@ -176,20 +192,4 @@ void SceneBasic_Uniform::setDiffuseAmbientSpecular(std::string structure, float 
 		prog.setUniform("MainLight.La", vec3(amb));
 		prog.setUniform("MainLight.Ls", vec3(spec));
 	}
-}
-
-void SetupTeapotUniform() 
-{
-	/*prog.setUniform("Light.Direction", normalMatrix * vec3(-lightPos));
-	float specularScalar = 0.3f;
-	prog.setUniform("Material.Kd", vec3(0.2f, 0.5f, 0.8f));
-	prog.setUniform("Material.Ka", vec3(0.9f, 0.9f, 0.9f));
-	prog.setUniform("Material.Ks", vec3(0.2f * specularScalar, 0.55f * specularScalar, 0.9f * specularScalar));
-	prog.setUniform("Material.Shininess", 100.0f);
-	model = mat4(1.0f);
-	model = glm::translate(model, vec3(0.0f, 0.0f, -2.0f));
-	model = glm::rotate(model, glm::radians(45.0f), vec3(0.0f, 1.0f, 0.0f));
-	model = glm::rotate(model, glm::radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
-	setMatrices();
-	teapot.render();*/
 }
