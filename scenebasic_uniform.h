@@ -18,12 +18,18 @@ class SceneBasic_Uniform : public Scene
 {
 private:
     GLSLProgram prog;
-
     Cube cube;
     Plane plane;
 
+    unsigned int brickTex;
+    unsigned int mossTex;
+    unsigned int woodTex;
+
+    float cameraZ;
     float angle;
     float tPrev;
+
+    bool movingForward;
 
     void compile();
 

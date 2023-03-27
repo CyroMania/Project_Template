@@ -23,20 +23,16 @@ using glm::mat4;
 //SceneBasic_Uniform::SceneBasic_Uniform() : torus(0.7f, 0.3f, 30, 30) {}
 //SceneBasic_Uniform::SceneBasic_Uniform() : teapot(50, glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f))) {}
 //SceneBasic_Uniform::SceneBasic_Uniform() : plane(50.0f, 50.0f, 1, 1)
-SceneBasic_Uniform::SceneBasic_Uniform() : angle(0.0), tPrev(0), plane(50.0f, 50.0f, 1, 1)
+SceneBasic_Uniform::SceneBasic_Uniform() : angle(0.0), tPrev(0), plane(50.0f, 50.0f, 1, 1), cameraZ(3.25f)
 {
 	//mesh = ObjMesh::load("../Project_Template/media/pig_triangulated.obj", true);
 }
-
-unsigned int brickTex;
-unsigned int mossTex;
-unsigned int woodTex;
 
 void SceneBasic_Uniform::initScene()
 {
 	compile();
 	glEnable(GL_DEPTH_TEST);
-	view = glm::lookAt(vec3(2.5f, 1.25f, 3.25f), vec3(2.5f, 1.25f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+	view = glm::lookAt(vec3(2.5f, 1.25f, cameraZ), vec3(2.5f, 1.25f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 	projection = mat4(1.0f);
 
 	// 3 Directional Light Uniforms
@@ -93,6 +89,23 @@ void SceneBasic_Uniform::update(float t)
 	angle += 0.25f * deltaT;
 	if (angle > glm::two_pi<float>())
 		angle -= glm::two_pi<float>();
+
+	if (cameraZ > -3.5f && movingForward) {
+		view = glm::translate(view, vec3(0.0f, 0.0f, -0.01f));
+		cameraZ = view[3].z;
+	}
+	else {
+		movingForward = false;
+	}
+
+	if (cameraZ < 2.5f && !movingForward) {
+		view = glm::translate(view, vec3(0.0f, 0.0f, 0.01f));
+		cameraZ = view[3].z;
+	}
+	else {
+		movingForward = true;
+	}
+
 }
 
 void SceneBasic_Uniform::render()
@@ -115,7 +128,7 @@ void SceneBasic_Uniform::render()
 	prog.setUniform("Material.Shininess", 180.0f);
 	prog.setUniform("TexIndex", 1);
 	model = mat4(1.0f);
-	model = glm::translate(model, vec3(0.0f, -2.0f, 0.0f));
+	model = glm::translate(model, vec3(0.0f, 0.0f, 0.0f));
 	setMatrices();
 	plane.render();
 }
