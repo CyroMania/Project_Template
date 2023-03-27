@@ -1,6 +1,6 @@
 #version 440
 
-layout (location = 0) out vec4 FragColor;
+layout (location = 0) out vec4 FragColour;
 
 layout (binding = 0) uniform sampler2D Tex1;
 layout (binding = 1) uniform sampler2D Tex2;
@@ -20,8 +20,6 @@ uniform struct LightInfo {
     vec3 Ls; //specular
 } MainLight;
 
-uniform LightInfo DirLights[3];
-
 uniform struct MaterialInfo {
     vec3 Ka; //ambient
     vec3 Kd; //diffuse
@@ -29,7 +27,13 @@ uniform struct MaterialInfo {
     float Shininess; //shininess factor
 } Material;
 
-vec3 blinnPhong(vec3 n, vec4 pos) {
+uniform struct FogInfo {
+    float MaxDist;
+    float MinDist;
+    vec3 Colour;
+} Fog;
+
+vec3 blinnPhong(vec4 pos, vec3 n) {
     vec3 mixedColour = vec3(0.0);
 
     if (TexIndex == 0) {
@@ -64,5 +68,17 @@ vec3 blinnPhong(vec3 n, vec4 pos) {
 }
 
 void main() {
-    FragColor = vec4(blinnPhong(normalize(Normal), Position), 1.0f);
+    float dist = abs( Position.z ); //distance calculations
+
+    //fogFactor calculation based on the formula presented earlier
+    float fogFactor = (Fog.MaxDist - dist) / (Fog.MaxDist - Fog.MinDist);
+
+    fogFactor = clamp( fogFactor, 0.0, 1.0 ); //we clamp values
+
+    //colour we receive from blinnPhong calculation
+    vec3 shadeColour = blinnPhong(Position, normalize(Normal));
+
+    //we assign a colour based on the fogFactor using mix
+    vec3 Colour = mix( Fog.Colour, shadeColour, fogFactor );
+    FragColour = vec4(Colour, 1.0); //final colour
 }

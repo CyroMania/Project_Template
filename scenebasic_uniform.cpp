@@ -47,23 +47,11 @@ void SceneBasic_Uniform::initScene()
 	view = glm::lookAt(vec3(2.5f, 1.25f, cameraZ), vec3(2.5f, 1.25f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 	projection = mat4(1.0f);
 
-	prog.setUniform("DirLights[0].La", vec3(0.0f, 0.0f, 0.1f));
-	prog.setUniform("DirLights[1].La", vec3(0.0f, 0.1f, 0.0f));
-	prog.setUniform("DirLights[2].La", vec3(0.1f, 0.0f, 0.0f));
+	setDiffuseAmbientSpecular("MainLight", 0.9f, 0.2f, 0.9f);
 
-	prog.setUniform("DirLights[0].Ld", vec3(0.0f, 0.0f, 1.8f));
-	prog.setUniform("DirLights[1].Ld", vec3(0.0f, 1.8f, 0.0f));
-	prog.setUniform("DirLights[2].Ld", vec3(1.8f, 0.0f, 0.0f));
-
-	prog.setUniform("DirLights[0].Ls", vec3(0.0f, 0.0f, 0.8f));
-	prog.setUniform("DirLights[1].Ls", vec3(0.0f, 0.8f, 0.0f));
-	prog.setUniform("DirLights[2].Ls", vec3(0.8f, 0.0f, 0.0f));
-	
-
-	prog.setUniform("MainLight.Ls", vec3(0.9f));
-	prog.setUniform("MainLight.Ld", vec3(0.9f));
-	prog.setUniform("MainLight.La", vec3(0.2f));
-
+	prog.setUniform("Fog.MaxDist", 20.0f);
+	prog.setUniform("Fog.MinDist", 5.0f);
+	prog.setUniform("Fog.Colour", vec3(0.5f, 0.5f, 0.5f));
 }
 
 void SceneBasic_Uniform::compile()
@@ -121,8 +109,8 @@ void SceneBasic_Uniform::render()
 	prog.setUniform("TexIndex", 0);
 
 	//Creates two walls of blocks with varying vertex x positions
-	createBlockWall(mat4(1.0), 5, 5, 0.0f);
-	createBlockWall(mat4(1.0), 5, 5, 5.0f);
+	renderBlockWall(mat4(1.0), 5, 5, 0.0f);
+	renderBlockWall(mat4(1.0), 5, 5, 5.0f);
 
 	setDiffuseAmbientSpecular("Material", 0.7f, 0.9f, 0.2f);
 	prog.setUniform("Material.Shininess", 180.0f);
@@ -138,16 +126,8 @@ void SceneBasic_Uniform::render()
 	prog.setUniform("Material.Ks", vec3(0.2f * specularScalar, 0.55f * specularScalar, 0.9f * specularScalar));
 	prog.setUniform("Material.Shininess", 100.0f);
 	prog.setUniform("TexIndex", 2);
-	for (int i = 0; i < 4; i++)
-	{
-		model = glm::translate(mat4(1.0f), vec3((2.0f * (i % 2)) + 1.5f, 0.0f, -1.0f * i));
-		model = glm::scale(model, vec3(0.25f, 0.25f, 0.25f));
-		model = glm::rotate(model, glm::radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(180.0f * (i % 2)), vec3(0.0f, 0.0f, 1.0f));
-		setMatrices();
-		teapot.render();
-	}
 
+	renderTeapotAisle(10);
 }
 
 void SceneBasic_Uniform::resize(int w, int h)
@@ -168,7 +148,7 @@ void SceneBasic_Uniform::setMatrices()
 	prog.setUniform("ProjectionMatrix", projection);
 }
 
-void SceneBasic_Uniform::createBlockWall(mat4 initialModel, int length, int height, float xPos)
+void SceneBasic_Uniform::renderBlockWall(mat4 initialModel, int length, int height, float xPos)
 {
 	for (int z = 0; z < length; z++)
 	{
@@ -178,6 +158,18 @@ void SceneBasic_Uniform::createBlockWall(mat4 initialModel, int length, int heig
 			setMatrices();
 			cube.render();
 		}
+	}
+}
+
+void SceneBasic_Uniform::renderTeapotAisle(int nTeapots) {
+	for (int i = 0; i < nTeapots; i++)
+	{
+		model = glm::translate(mat4(1.0f), vec3((2.0f * (i % 2)) + 1.5f, 0.0f, -1.0f * i));
+		model = glm::scale(model, vec3(0.25f, 0.25f, 0.25f));
+		model = glm::rotate(model, glm::radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(180.0f * (i % 2)), vec3(0.0f, 0.0f, 1.0f));
+		setMatrices();
+		teapot.render();
 	}
 }
 

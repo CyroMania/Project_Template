@@ -43,7 +43,8 @@ public:
     void render();
     void resize(int, int);
     void setMatrices();
-    void createBlockWall(glm::mat4, int, int, float);
+    void renderBlockWall(glm::mat4, int, int, float);
+    void renderTeapotAisle(int);
     void setDiffuseAmbientSpecular(std::string structure, float dif, float amb, float spec);
 };
 
