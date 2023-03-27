@@ -18,7 +18,7 @@ uniform struct LightInfo {
     vec3 La; //ambient
     vec3 Ld; //diffuse
     vec3 Ls; //specular
-} MainLight;
+} PointLight;
 
 uniform struct MaterialInfo {
     vec3 Ka; //ambient
@@ -50,18 +50,18 @@ vec3 blinnPhong(vec4 pos, vec3 n) {
         mixedColour = cementColour.rgb;
     }
 
-    vec3 ambient = MainLight.La * Material.Ka;
+    vec3 ambient = PointLight.La * Material.Ka;
     vec3 diffuse = vec3(0.0);
     vec3 specular = vec3(0.0);
-    vec3 s = normalize(vec3(MainLight.Position - (pos * MainLight.Position.w)));
+    vec3 s = normalize(vec3(PointLight.Position - (pos * PointLight.Position.w)));
 
     float sDotN = max(dot(s,n),0.0);
-    diffuse = MainLight.Ld * Material.Kd * sDotN * mixedColour;
+    diffuse = PointLight.Ld * Material.Kd * sDotN * mixedColour;
 
     if (sDotN > 0.0) {
         vec3 v = normalize(-pos.xyz);
         vec3 h = normalize(v + s);
-        specular = MainLight.Ls * Material.Ks * pow(max(dot(h,n),0.0), Material.Shininess);
+        specular = PointLight.Ls * Material.Ks * pow(max(dot(h,n),0.0), Material.Shininess);
     }
 
     return ambient + diffuse + specular;
@@ -70,15 +70,15 @@ vec3 blinnPhong(vec4 pos, vec3 n) {
 void main() {
     float dist = abs( Position.z ); //distance calculations
 
-    //fogFactor calculation based on the formula presented earlier
+    //fogFactor calculation based on formula
     float fogFactor = (Fog.MaxDist - dist) / (Fog.MaxDist - Fog.MinDist);
 
     fogFactor = clamp( fogFactor, 0.0, 1.0 ); //we clamp values
 
-    //colour we receive from blinnPhong calculation
+    //the colour we get from the main blinnPhong shader
     vec3 shadeColour = blinnPhong(Position, normalize(Normal));
 
     //we assign a colour based on the fogFactor using mix
-    vec3 Colour = mix( Fog.Colour, shadeColour, fogFactor );
+    vec3 Colour = mix(Fog.Colour, shadeColour, fogFactor);
     FragColour = vec4(Colour, 1.0); //final colour
 }

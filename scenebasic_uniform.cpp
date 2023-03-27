@@ -47,7 +47,7 @@ void SceneBasic_Uniform::initScene()
 	view = glm::lookAt(vec3(2.5f, 1.25f, cameraZ), vec3(2.5f, 1.25f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 	projection = mat4(1.0f);
 
-	setDiffuseAmbientSpecular("MainLight", 0.9f, 0.2f, 0.9f);
+	setDiffuseAmbientSpecular("PointLight", 0.9f, 0.2f, 0.9f);
 
 	prog.setUniform("Fog.MaxDist", 20.0f);
 	prog.setUniform("Fog.MinDist", 5.0f);
@@ -101,7 +101,7 @@ void SceneBasic_Uniform::render()
 	GlCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 	vec4 lightPos = vec4(8.0f * cos(angle), 8.0f, 8.0f * sin(angle), 1.0f);
-	prog.setUniform("MainLight.Position", vec4(lightPos));
+	prog.setUniform("PointLight.Position", vec4(lightPos));
 	mat3 normalMatrix = mat3(vec3(view[0]), vec3(view[1]), vec3(view[2]));
 
 	setDiffuseAmbientSpecular("Material", 0.7f, 0.95f, 0.2f);
@@ -181,10 +181,10 @@ void SceneBasic_Uniform::setDiffuseAmbientSpecular(std::string structure, float 
 		prog.setUniform("Material.Ka", vec3(amb));
 		prog.setUniform("Material.Ks", vec3(spec));
 	}
-	else if (structure == "MainLight")
+	else if (structure == "PointLight")
 	{
-		prog.setUniform("MainLight.Ld", vec3(dif));
-		prog.setUniform("MainLight.La", vec3(amb));
-		prog.setUniform("MainLight.Ls", vec3(spec));
+		prog.setUniform("PointLight.Ld", vec3(dif));
+		prog.setUniform("PointLight.La", vec3(amb));
+		prog.setUniform("PointLight.Ls", vec3(spec));
 	}
 }
