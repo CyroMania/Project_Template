@@ -64,9 +64,6 @@ void SceneBasic_Uniform::initScene()
 	prog.setUniform("MainLight.Ld", vec3(0.9f));
 	prog.setUniform("MainLight.La", vec3(0.2f));
 
-	//loading separate textures
-
-
 }
 
 void SceneBasic_Uniform::compile()
