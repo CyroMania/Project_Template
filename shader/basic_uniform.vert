@@ -19,7 +19,7 @@ void getCamSpaceValues(out vec3 norm, out vec4 position) {
 
 void main()
 {
-    getCamSpaceValues(Normal,Position);
+    getCamSpaceValues(Normal, Position);
     TexCoord = VertexTexCoord;
     gl_Position = MVP*vec4(VertexPosition, 1.0);
 }

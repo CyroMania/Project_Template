@@ -19,6 +19,8 @@ uniform struct LightInfo {
     vec3 Ls; //specular
 } MainLight;
 
+uniform LightInfo DirLights[3];
+
 uniform struct MaterialInfo {
     vec3 Ka; //ambient
     vec3 Kd; //diffuse
@@ -42,7 +44,7 @@ vec3 blinnPhong(vec3 n, vec4 pos) {
     vec3 ambient = MainLight.La * Material.Ka;
     vec3 diffuse = vec3(0.0);
     vec3 specular = vec3(0.0);
-    vec3 s = normalize(vec3(MainLight.Position-(pos*MainLight.Position.w)));
+    vec3 s = normalize(vec3(MainLight.Position - (pos * MainLight.Position.w)));
 
     float sDotN = max(dot(s,n),0.0);
     diffuse = MainLight.Ld * Material.Kd * sDotN * mixedColour;
@@ -50,12 +52,12 @@ vec3 blinnPhong(vec3 n, vec4 pos) {
     if (sDotN > 0.0) {
         vec3 v = normalize(-pos.xyz);
         vec3 h = normalize(v + s);
-        specular = MainLight.Ls * Material.Ks * pow(max(dot(h,n),0.0),Material.Shininess);
+        specular = MainLight.Ls * Material.Ks * pow(max(dot(h,n),0.0), Material.Shininess);
     }
 
     return ambient + diffuse + specular;
 }
 
 void main() {
-    FragColor = vec4(blinnPhong(Normal, Position), 1.0f);
+    FragColor = vec4(blinnPhong(normalize(Normal), Position), 1.0f);
 }

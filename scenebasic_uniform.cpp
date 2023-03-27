@@ -23,7 +23,7 @@ using glm::mat4;
 //SceneBasic_Uniform::SceneBasic_Uniform() : torus(0.7f, 0.3f, 30, 30) {}
 //SceneBasic_Uniform::SceneBasic_Uniform() : teapot(50, glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f))) {}
 //SceneBasic_Uniform::SceneBasic_Uniform() : plane(50.0f, 50.0f, 1, 1)
-SceneBasic_Uniform::SceneBasic_Uniform() : angle(0.0), tPrev(0), plane(50.0f, 50.0f, 1, 1), cameraZ(3.25f)
+SceneBasic_Uniform::SceneBasic_Uniform() : angle(0.0), tPrev(0), plane(50.0f, 50.0f, 1, 1), cameraZ(3.5f), movingForward(false)
 {
 	//mesh = ObjMesh::load("../Project_Template/media/pig_triangulated.obj", true);
 }
@@ -35,20 +35,18 @@ void SceneBasic_Uniform::initScene()
 	view = glm::lookAt(vec3(2.5f, 1.25f, cameraZ), vec3(2.5f, 1.25f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 	projection = mat4(1.0f);
 
-	// 3 Directional Light Uniforms
-	// Will keep these here for reference
-	//prog.setUniform("Lights[0].La", vec3(0.0f, 0.0f, 0.1f));
-	//prog.setUniform("Lights[1].La", vec3(0.0f, 0.1f, 0.0f));
-	//prog.setUniform("Lights[2].La", vec3(0.1f, 0.0f, 0.0f));
+	prog.setUniform("DirLights[0].La", vec3(0.0f, 0.0f, 0.1f));
+	prog.setUniform("DirLights[1].La", vec3(0.0f, 0.1f, 0.0f));
+	prog.setUniform("DirLights[2].La", vec3(0.1f, 0.0f, 0.0f));
 
-	//prog.setUniform("Lights[0].Ld", vec3(0.0f, 0.0f, 1.8f));
-	//prog.setUniform("Lights[1].Ld", vec3(0.0f, 1.8f, 0.0f));
-	//prog.setUniform("Lights[2].Ld", vec3(1.8f, 0.0f, 0.0f));
+	prog.setUniform("DirLights[0].Ld", vec3(0.0f, 0.0f, 1.8f));
+	prog.setUniform("DirLights[1].Ld", vec3(0.0f, 1.8f, 0.0f));
+	prog.setUniform("DirLights[2].Ld", vec3(1.8f, 0.0f, 0.0f));
 
-	//prog.setUniform("Lights[0].Ls", vec3(0.0f, 0.0f, 0.8f));
-	//prog.setUniform("Lights[1].Ls", vec3(0.0f, 0.8f, 0.0f));
-	//prog.setUniform("Lights[2].Ls", vec3(0.8f, 0.0f, 0.0f));
-	//
+	prog.setUniform("DirLights[0].Ls", vec3(0.0f, 0.0f, 0.8f));
+	prog.setUniform("DirLights[1].Ls", vec3(0.0f, 0.8f, 0.0f));
+	prog.setUniform("DirLights[2].Ls", vec3(0.8f, 0.0f, 0.0f));
+	
 
 	prog.setUniform("MainLight.Ls", vec3(0.8f));
 	prog.setUniform("MainLight.Ld", vec3(0.8f));
