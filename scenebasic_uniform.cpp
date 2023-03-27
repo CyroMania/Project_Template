@@ -32,7 +32,7 @@ void SceneBasic_Uniform::initScene()
 {
 	compile();
 	glEnable(GL_DEPTH_TEST);
-	view = glm::lookAt(vec3(1.0f, 1.25f, 1.25f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+	view = glm::lookAt(vec3(4.0f, 1.25f, 3.25f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 	projection = mat4(1.0f);
 
 	// 3 Directional Light Uniforms
@@ -96,13 +96,22 @@ void SceneBasic_Uniform::render()
 	prog.setUniform("Light.Position", vec4(view * lightPos));
 	mat3 normalMatrix = mat3(vec3(view[0]), vec3(view[1]), vec3(view[2]));
 
+
 	prog.setUniform("Material.Kd", vec3(0.7f, 0.7f, 0.7f));
 	prog.setUniform("Material.Ka", vec3(0.95f, 0.95f, 0.95f));
 	prog.setUniform("Material.Ks", vec3(0.2f, 0.2f, 0.2f));
 	prog.setUniform("Material.Shininess", 100.0f);
-	model = mat4(1.0f);
-	setMatrices();
-	cube.render();
+
+	for (int z = 0; z < 5; z++)
+	{
+		for (int y = 0; y < 5; y++)
+		{
+			model = glm::translate(mat4(1.0f), vec3(0.0f, y * 1.0f, z * -1.0f));
+			setMatrices();
+			cube.render();
+		}
+	}
+
 	//prog.setUniform("Material.Kd", vec3(0.7f, 0.7f, 0.7f));
 	//prog.setUniform("Material.Ka", vec3(0.9f, 0.9f, 0.9f));
 	//prog.setUniform("Material.Ks", vec3(0.2f, 0.2f, 0.2f));

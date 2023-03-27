@@ -1,4 +1,4 @@
-﻿Build started 26/03/2023 15:42:37.
+﻿Build started 27/03/2023 01:07:44.
 Logging verbosity is set to: Normal.     1>Project "C:\Uni\COMP3015\Project_Template\Project_Template.vcxproj" on node 2 (Build target(s)).
      1>InitializeBuildStatus:
          Creating "x64\Debug\Project_Template.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
@@ -37,4 +37,4 @@ Build succeeded.
     1 Warning(s)
     0 Error(s)
 
-Time Elapsed 00:00:01.64
+Time Elapsed 00:00:01.96
