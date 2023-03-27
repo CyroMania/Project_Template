@@ -28,6 +28,10 @@ SceneBasic_Uniform::SceneBasic_Uniform() : angle(0.0), tPrev(0), plane(50.0f, 50
 	//mesh = ObjMesh::load("../Project_Template/media/pig_triangulated.obj", true);
 }
 
+unsigned int brickTex;
+unsigned int mossTex;
+unsigned int woodTex;
+
 void SceneBasic_Uniform::initScene()
 {
 	compile();
@@ -50,17 +54,20 @@ void SceneBasic_Uniform::initScene()
 	//prog.setUniform("Lights[2].Ls", vec3(0.8f, 0.0f, 0.0f));
 	//
 
-	prog.setUniform("Light.Ls", vec3(1.0f));
-	prog.setUniform("Light.Ld", vec3(1.0f));
-	prog.setUniform("Light.La", vec3(0.2f));
+	prog.setUniform("MainLight.Ls", vec3(0.8f));
+	prog.setUniform("MainLight.Ld", vec3(0.8f));
+	prog.setUniform("MainLight.La", vec3(0.2f));
 
 	//loading separate textures
-	unsigned int tex1 = Texture::loadTexture("media/texture/brick1.jpg");
-	unsigned int tex2 = Texture::loadTexture("media/texture/moss.png");
+	brickTex = Texture::loadTexture("media/texture/brick1.jpg");
+	mossTex = Texture::loadTexture("media/texture/moss.png");
+	woodTex = Texture::loadTexture("media/texture/hardwood2_diffuse.jpg");
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, tex1);
+	glBindTexture(GL_TEXTURE_2D, brickTex);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, tex2);
+	glBindTexture(GL_TEXTURE_2D, mossTex);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, woodTex);
 }
 
 void SceneBasic_Uniform::compile()
@@ -92,38 +99,25 @@ void SceneBasic_Uniform::render()
 {
 	GlCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-	vec4 lightPos = vec4(10.0f * cos(angle), 10.0f, 10.0f * sin(angle), 1.0f);
-	prog.setUniform("Light.Position", vec4(view * lightPos));
+	vec4 lightPos = vec4(10.0f * cos(angle), 8.0f, 10.0f * sin(angle), 1.0f);
+	prog.setUniform("MainLight.Position", vec4(view * lightPos));
 	mat3 normalMatrix = mat3(vec3(view[0]), vec3(view[1]), vec3(view[2]));
 
-
-	prog.setUniform("Material.Kd", vec3(0.7f, 0.7f, 0.7f));
-	prog.setUniform("Material.Ka", vec3(0.95f, 0.95f, 0.95f));
-	prog.setUniform("Material.Ks", vec3(0.2f, 0.2f, 0.2f));
+	setDiffuseAmbientSpecular("Material", 0.7f, 0.95f, 0.2f);
 	prog.setUniform("Material.Shininess", 100.0f);
+	prog.setUniform("TexIndex", 0);
 
-	for (int x = 0; x < 2; x++)
-	{
-		for (int z = 0; z < 5; z++)
-		{
-			for (int y = 0; y < 5; y++)
-			{
-				model = glm::translate(mat4(1.0f), vec3(x * 5.0f, y * 1.0f, z * -1.0f));
-				setMatrices();
-				cube.render();
-			}
-		}
-	}
+	//Creates two walls of blocks with varying vertex x positions
+	createBlockWall(mat4(1.0), 5, 5, 0.0f);
+	createBlockWall(mat4(1.0), 5, 5, 5.0f);
 
-
-	//prog.setUniform("Material.Kd", vec3(0.7f, 0.7f, 0.7f));
-	//prog.setUniform("Material.Ka", vec3(0.9f, 0.9f, 0.9f));
-	//prog.setUniform("Material.Ks", vec3(0.2f, 0.2f, 0.2f));
-	//prog.setUniform("Material.Shininess", 180.0f);
-	//model = mat4(1.0f);
-	//model = glm::translate(model, vec3(0.0f, -2.0f, 0.0f));
-	//setMatrices();
-	//plane.render();
+	setDiffuseAmbientSpecular("Material", 0.7f, 0.9f, 0.2f);
+	prog.setUniform("Material.Shininess", 180.0f);
+	prog.setUniform("TexIndex", 1);
+	model = mat4(1.0f);
+	model = glm::translate(model, vec3(0.0f, -2.0f, 0.0f));
+	setMatrices();
+	plane.render();
 }
 
 void SceneBasic_Uniform::resize(int w, int h)
@@ -142,6 +136,35 @@ void SceneBasic_Uniform::setMatrices()
 	prog.setUniform("NormalMatrix", glm::mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));
 	prog.setUniform("MVP", projection * mv);
 	prog.setUniform("ProjectionMatrix", projection);
+}
+
+void SceneBasic_Uniform::createBlockWall(mat4 initialModel, int length, int height, float xPos)
+{
+	for (int z = 0; z < length; z++)
+	{
+		for (int y = 0; y < height; y++)
+		{
+			model = glm::translate(initialModel, vec3(xPos, y * 1.0f, z * -1.0f));
+			setMatrices();
+			cube.render();
+		}
+	}
+}
+
+void SceneBasic_Uniform::setDiffuseAmbientSpecular(std::string structure, float dif, float amb, float spec)
+{
+	if (structure == "Material") 
+	{
+		prog.setUniform("Material.Kd", vec3(dif));
+		prog.setUniform("Material.Ka", vec3(amb));
+		prog.setUniform("Material.Ks", vec3(spec));
+	}
+	else if (structure == "MainLight")
+	{
+		prog.setUniform("MainLight.Ld", vec3(dif));
+		prog.setUniform("MainLight.La", vec3(amb));
+		prog.setUniform("MainLight.Ls", vec3(spec));
+	}
 }
 
 void SetupTeapotUniform() 

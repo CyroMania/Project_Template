@@ -12,7 +12,6 @@
 #include "helper/glslprogram.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/glm.hpp>
 
 
 class SceneBasic_Uniform : public Scene
@@ -36,6 +35,8 @@ public:
     void render();
     void resize(int, int);
     void setMatrices();
+    void createBlockWall(glm::mat4, int, int, float);
+    void setDiffuseAmbientSpecular(std::string structure, float dif, float amb, float spec);
 };
 
 #endif // SCENEBASIC_UNIFORM_H
