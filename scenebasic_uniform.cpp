@@ -25,7 +25,19 @@ using glm::mat4;
 //SceneBasic_Uniform::SceneBasic_Uniform() : plane(50.0f, 50.0f, 1, 1)
 SceneBasic_Uniform::SceneBasic_Uniform() : teapot(50, glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f))), angle(0.0), tPrev(0), plane(50.0f, 50.0f, 1, 1), cameraZ(3.5f), movingForward(false)
 {
-	//mesh = ObjMesh::load("../Project_Template/media/pig_triangulated.obj", true);
+	brickTex = Texture::loadTexture("media/texture/brick1.jpg");
+	mossTex = Texture::loadTexture("media/texture/moss.png");
+	woodTex = Texture::loadTexture("media/texture/hardwood2_diffuse.jpg");
+	cementTex = Texture::loadTexture("media/texture/cement.jpg");
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, brickTex);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, mossTex);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, woodTex);
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, cementTex);
 }
 
 void SceneBasic_Uniform::initScene()
@@ -48,20 +60,13 @@ void SceneBasic_Uniform::initScene()
 	prog.setUniform("DirLights[2].Ls", vec3(0.8f, 0.0f, 0.0f));
 	
 
-	prog.setUniform("MainLight.Ls", vec3(0.8f));
-	prog.setUniform("MainLight.Ld", vec3(0.8f));
+	prog.setUniform("MainLight.Ls", vec3(0.9f));
+	prog.setUniform("MainLight.Ld", vec3(0.9f));
 	prog.setUniform("MainLight.La", vec3(0.2f));
 
 	//loading separate textures
-	brickTex = Texture::loadTexture("media/texture/brick1.jpg");
-	mossTex = Texture::loadTexture("media/texture/moss.png");
-	woodTex = Texture::loadTexture("media/texture/hardwood2_diffuse.jpg");
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, brickTex);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, mossTex);
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, woodTex);
+
+
 }
 
 void SceneBasic_Uniform::compile()
@@ -135,9 +140,10 @@ void SceneBasic_Uniform::render()
 	prog.setUniform("Material.Ka", vec3(0.9f, 0.9f, 0.9f));
 	prog.setUniform("Material.Ks", vec3(0.2f * specularScalar, 0.55f * specularScalar, 0.9f * specularScalar));
 	prog.setUniform("Material.Shininess", 100.0f);
+	prog.setUniform("TexIndex", 2);
 	for (int i = 0; i < 4; i++)
 	{
-		model = glm::translate(mat4(1.0f), vec3((2.5f * (i % 2)) + 1.0f, 0.0f, -1.0f * i));
+		model = glm::translate(mat4(1.0f), vec3((2.0f * (i % 2)) + 1.5f, 0.0f, -1.0f * i));
 		model = glm::scale(model, vec3(0.25f, 0.25f, 0.25f));
 		model = glm::rotate(model, glm::radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
 		model = glm::rotate(model, glm::radians(180.0f * (i % 2)), vec3(0.0f, 0.0f, 1.0f));

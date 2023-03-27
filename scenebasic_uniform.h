@@ -25,6 +25,7 @@ private:
     unsigned int brickTex;
     unsigned int mossTex;
     unsigned int woodTex;
+    unsigned int cementTex;
 
     float cameraZ;
     float angle;

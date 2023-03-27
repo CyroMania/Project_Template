@@ -5,6 +5,7 @@ layout (location = 0) out vec4 FragColor;
 layout (binding = 0) uniform sampler2D Tex1;
 layout (binding = 1) uniform sampler2D Tex2;
 layout (binding = 2) uniform sampler2D Tex3;
+layout (binding = 3) uniform sampler2D Tex4;
 
 in vec4 Position;
 in vec3 Normal;
@@ -36,9 +37,13 @@ vec3 blinnPhong(vec3 n, vec4 pos) {
         vec4 mossColour = texture(Tex2, TexCoord);
         mixedColour = mix(brickColour.rgb, mossColour.rgb, mossColour.a);
     }
-    else {
+    else  if (TexIndex == 1) {
         vec4 woodColour = texture(Tex3, TexCoord);
         mixedColour = woodColour.rgb;
+    }
+    else {
+        vec4 cementColour = texture(Tex4, TexCoord);
+        mixedColour = cementColour.rgb;
     }
 
     vec3 ambient = MainLight.La * Material.Ka;
