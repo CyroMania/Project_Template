@@ -18,9 +18,7 @@ class SceneBasic_Uniform : public Scene
 {
 private:
     GLSLProgram prog;
-    Cube cube;
     Plane plane;
-    Teapot teapot;
 
     unsigned int brickTex;
     unsigned int mossTex;
