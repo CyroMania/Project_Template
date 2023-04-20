@@ -201,7 +201,7 @@ ObjMesh::ObjMeshData::ObjVertex::ObjVertex(std::string &vertString, ObjMeshData 
 }
 
 void ObjMesh::ObjMeshData::generateNormalsIfNeeded() {
-    if( normals.size() != 0 ) return;
+    if( normals.size() > 100 ) return;
 
     normals.resize(points.size());
 

@@ -37,17 +37,17 @@ vec3 blinnPhong(vec4 pos, vec3 n) {
     vec3 mixedColour = vec3(0.0);
 
     if (TexIndex == 0) {
-        vec4 brickColour = texture(Tex1, TexCoord);
+        vec4 stoneColour = texture(Tex1, TexCoord);
         vec4 mossColour = texture(Tex2, TexCoord);
-        mixedColour = mix(brickColour.rgb, mossColour.rgb, mossColour.a);
+        mixedColour = mix(stoneColour.rgb, mossColour.rgb, mossColour.a);
     }
     else  if (TexIndex == 1) {
-        vec4 woodColour = texture(Tex3, TexCoord);
-        mixedColour = woodColour.rgb;
+        vec4 metalColour = texture(Tex3, TexCoord);
+        mixedColour = metalColour.rgb;
     }
     else {
-        vec4 cementColour = texture(Tex4, TexCoord);
-        mixedColour = cementColour.rgb;
+        vec4 grassColour = texture(Tex4, TexCoord);
+        mixedColour = grassColour.rgb;
     }
 
     vec3 ambient = PointLight.La * Material.Ka;

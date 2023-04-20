@@ -172,10 +172,10 @@ void GLSLProgram::link() {
     if (linked) return;
     if (handle <= 0) throw GLSLProgramException("Program has not been compiled.");
 
-    GlCall(glLinkProgram(handle));
+    glLinkProgram(handle);
 	int status = 0;
 	std::string errString;
-	GlCall(glGetProgramiv(handle, GL_LINK_STATUS, &status));
+	glGetProgramiv(handle, GL_LINK_STATUS, &status);
 	if (GL_FALSE == status) {
 		// Store log and return false
 		int length = 0;

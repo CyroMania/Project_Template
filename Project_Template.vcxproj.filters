@@ -45,16 +45,7 @@
     <ClCompile Include="errorhandling.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="helper\torus.cpp">
-      <Filter>helper</Filter>
-    </ClCompile>
     <ClCompile Include="helper\trianglemesh.cpp">
-      <Filter>helper</Filter>
-    </ClCompile>
-    <ClCompile Include="helper\teapot.cpp">
-      <Filter>helper</Filter>
-    </ClCompile>
-    <ClCompile Include="helper\objmesh.cpp">
       <Filter>helper</Filter>
     </ClCompile>
     <ClCompile Include="helper\plane.cpp">
@@ -64,9 +55,6 @@
       <Filter>helper\stb</Filter>
     </ClCompile>
     <ClCompile Include="helper\texture.cpp">
-      <Filter>helper</Filter>
-    </ClCompile>
-    <ClCompile Include="helper\cube.cpp">
       <Filter>helper</Filter>
     </ClCompile>
   </ItemGroup>
@@ -103,15 +91,6 @@
     <ClInclude Include="errorhandling.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="helper\torus.h">
-      <Filter>helper</Filter>
-    </ClInclude>
-    <ClInclude Include="helper\teapotdata.h">
-      <Filter>helper</Filter>
-    </ClInclude>
-    <ClInclude Include="helper\teapot.h">
-      <Filter>helper</Filter>
-    </ClInclude>
     <ClInclude Include="helper\trianglemesh.h">
       <Filter>helper</Filter>
     </ClInclude>
@@ -119,9 +98,6 @@
       <Filter>helper</Filter>
     </ClInclude>
     <ClInclude Include="helper\drawable.h">
-      <Filter>helper</Filter>
-    </ClInclude>
-    <ClInclude Include="helper\objmesh.h">
       <Filter>helper</Filter>
     </ClInclude>
     <ClInclude Include="helper\plane.h">
@@ -133,52 +109,5 @@
     <ClInclude Include="helper\texture.h">
       <Filter>helper</Filter>
     </ClInclude>
-    <ClInclude Include="helper\cube.h">
-      <Filter>helper</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="media\texture\ao_ears.png">
-      <Filter>media</Filter>
-    </Image>
-    <Image Include="media\texture\bluewater.png">
-      <Filter>media</Filter>
-    </Image>
-    <Image Include="media\texture\brick1.jpg">
-      <Filter>media</Filter>
-    </Image>
-    <Image Include="media\texture\cement.jpg">
-      <Filter>media</Filter>
-    </Image>
-    <Image Include="media\texture\fire.png">
-      <Filter>media</Filter>
-    </Image>
-    <Image Include="media\texture\flower.png">
-      <Filter>media</Filter>
-    </Image>
-    <Image Include="media\texture\hardwood2_diffuse.jpg">
-      <Filter>media</Filter>
-    </Image>
-    <Image Include="media\texture\hardwood2_roughness.jpg">
-      <Filter>media</Filter>
-    </Image>
-    <Image Include="media\texture\me_textile.png">
-      <Filter>media</Filter>
-    </Image>
-    <Image Include="media\texture\moss.png">
-      <Filter>media</Filter>
-    </Image>
-    <Image Include="media\texture\ogre_diffuse.png">
-      <Filter>media</Filter>
-    </Image>
-    <Image Include="media\texture\ogre_normalmap.png">
-      <Filter>media</Filter>
-    </Image>
-    <Image Include="media\texture\smoke.png">
-      <Filter>media</Filter>
-    </Image>
-    <Image Include="media\texture\star.png">
-      <Filter>media</Filter>
-    </Image>
   </ItemGroup>
 </Project>
