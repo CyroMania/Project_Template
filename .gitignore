@@ -37,4 +37,6 @@
 *.idb
 *.ilk
 
- x64/Debug/*
+x64/Debug/*
+.vs/Project_Template/FileContentInde/*.vsidx
+.vs/Project_Template/v17/*
