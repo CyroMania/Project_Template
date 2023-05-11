@@ -1,5 +1,6 @@
 #include "objmesh.h"
 #include "utils.h"
+#include "glm/glm.hpp"
 
 using std::string;
 using glm::vec3;

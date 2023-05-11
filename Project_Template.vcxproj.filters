@@ -57,6 +57,9 @@
     <ClCompile Include="helper\texture.cpp">
       <Filter>helper</Filter>
     </ClCompile>
+    <ClCompile Include="helper\objmesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\basic_uniform.frag">
@@ -108,6 +111,9 @@
     </ClInclude>
     <ClInclude Include="helper\texture.h">
       <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\objmesh.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
