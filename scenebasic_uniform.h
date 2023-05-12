@@ -4,6 +4,9 @@
 #include "helper/scene.h"
 #include "helper/plane.h"
 #include "helper/objmesh.h"
+#include "helper/frustum.h"
+#include "helper/teapot.h"
+#include "helper/torus.h"
 
 #include <glad/glad.h>
 #include "helper/glslprogram.h"
@@ -14,24 +17,27 @@
 class SceneBasic_Uniform : public Scene
 {
 private:
-    GLSLProgram prog;
+    GLSLProgram prog, solidProg;
+    unsigned int shadowFBO, pass1Index, pass2Index;
+
+    Teapot teapot;
     Plane plane;
-    std::unique_ptr<ObjMesh> wall;
-    std::unique_ptr<ObjMesh> bucket;
+    Torus torus;
 
-    unsigned int stoneTex;
-    unsigned int mossTex;
-    unsigned int metalTex;
-    unsigned int grassTex;
-
-    float cameraZ;
-    float angle;
+    int shadowMapWidth, shadowMapHeight;
     float tPrev;
 
-    bool movingForward;
+    glm::mat4 lightPV, shadowBias;
+
+    Frustum lightFrustum;
+    float angle;
 
     void compile();
-
+    void setMatrices();
+    void setupFBO();
+    void drawScene();
+    void spitOutDepthBuffer();
+    
 public:
     SceneBasic_Uniform();
 
@@ -39,9 +45,6 @@ public:
     void update( float t );
     void render();
     void resize(int, int);
-    void setMatrices();
-    void RenderBuckets(int);
-    void setDiffuseAmbientSpecular(std::string structure, float dif, float amb, float spec);
 };
 
 #endif // SCENEBASIC_UNIFORM_H

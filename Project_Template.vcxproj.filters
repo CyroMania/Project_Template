@@ -60,12 +60,27 @@
     <ClCompile Include="helper\objmesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="helper\frustum.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\teapot.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\torus.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\basic_uniform.frag">
       <Filter>shaders</Filter>
     </None>
     <None Include="shader\basic_uniform.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shader\solid.fs">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shader\solid.vs">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>
@@ -114,6 +129,18 @@
     </ClInclude>
     <ClInclude Include="helper\objmesh.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\frustum.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\teapot.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\torus.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\teapotdata.h">
+      <Filter>helper</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
