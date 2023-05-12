@@ -29,7 +29,7 @@ private:
     float tPrev, lightAngle, lightRotationSpeed;
     glm::vec4 lightPos;
 
-    //float cameraZ;
+    float cameraZ;
     //float angle;
     //float tPrev;
 

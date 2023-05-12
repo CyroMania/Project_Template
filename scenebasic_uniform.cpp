@@ -51,7 +51,7 @@ void SceneBasic_Uniform::initScene()
 	glEnable(GL_DEPTH_TEST);
 
 	view = glm::lookAt(
-		glm::vec3(0.0f, 4.0f, 7.0f),
+		glm::vec3(0.0f, 3.0f, 7.0f),
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f)
 	);
@@ -109,6 +109,22 @@ void SceneBasic_Uniform::update(float t)
 		lightPos.x = glm::cos(lightAngle) * 7.0f;
 		lightPos.y = 3.0f;
 		lightPos.z = glm::sin(lightAngle) * 7.0f;
+	}
+
+	if (cameraZ > -3.5f && movingForward) {
+		view = glm::translate(view, vec3(0.0f, 0.0f, -0.01f));
+		cameraZ = view[3].z;
+	}
+	else {
+		movingForward = false;
+	}
+
+	if (cameraZ < 4.0f && !movingForward) {
+		view = glm::translate(view, vec3(0.0f, 0.0f, 0.01f));
+		cameraZ = view[3].z;
+	}
+	else {
+		movingForward = true;
 	}
 }
 
