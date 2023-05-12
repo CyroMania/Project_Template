@@ -21,38 +21,53 @@ using glm::vec4;
 using glm::mat3;
 using glm::mat4;
 
-SceneBasic_Uniform::SceneBasic_Uniform() : angle(0.0), tPrev(0), plane(20.0f, 20.0f, 1, 1), cameraZ(4.0f), movingForward(false)
+SceneBasic_Uniform::SceneBasic_Uniform() : plane(20.0f, 20.0f, 1, 1), lightPos(5.0f, 5.0f, 5.0f, 1.0f), tPrev(0.0f)
 {
-	wall = ObjMesh::load("media/model/wall.obj", false, false);
-	bucket = ObjMesh::load("media/model/bucket.obj", false, true);
+	mesh = ObjMesh::load("../Project_Template/media/spot/spot_triangulated.obj");
 
-	stoneTex = Texture::loadTexture("media/texture/highresWall.jpg");
-	mossTex = Texture::loadTexture("media/texture/moss.png");
-	metalTex = Texture::loadTexture("media/texture/scrapedMetal.jpg");
-	grassTex = Texture::loadTexture("media/texture/grass.png");
+	//wall = ObjMesh::load("media/model/wall.obj", false, false);
+	//bucket = ObjMesh::load("media/model/bucket.obj", false, true);
 
-	glActiveTexture(GL_TEXTURE0);
+	//stoneTex = Texture::loadTexture("media/texture/highresWall.jpg");
+	//mossTex = Texture::loadTexture("media/texture/moss.png");
+	//metalTex = Texture::loadTexture("media/texture/scrapedMetal.jpg");
+	//grassTex = Texture::loadTexture("media/texture/grass.png");
+
+	/*glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, stoneTex);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, mossTex);
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, metalTex);
 	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, grassTex);
+	glBindTexture(GL_TEXTURE_2D, grassTex);*/
 }
 
 void SceneBasic_Uniform::initScene()
 {
 	compile();
+
+	glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
+
 	glEnable(GL_DEPTH_TEST);
-	view = glm::lookAt(vec3(2.5f, 1.25f, cameraZ), vec3(2.5f, 1.25f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
-	projection = mat4(1.0f);
 
-	setDiffuseAmbientSpecular("PointLight", 0.9f, 0.2f, 0.8f);
+	view = glm::lookAt(
+		glm::vec3(0.0f, 4.0f, 7.0f),
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f)
+	);
 
-	prog.setUniform("Fog.MaxDist", 15.0f);
-	prog.setUniform("Fog.MinDist", 5.0f);
-	prog.setUniform("Fog.Colour", vec3(0.5f, 0.5f, 0.5f));
+	projection = glm::perspective(glm::radians(50.0f), (float)width / height, 0.5f, 100.0f);
+
+	lightAngle = 0.0f;
+	lightRotationSpeed = 1.5f;
+
+	prog.setUniform("Light[0].L", glm::vec3(45.0f));
+	prog.setUniform("Light[0].Position", view * lightPos);
+	prog.setUniform("Light[1].L", glm::vec3(0.3f));
+	prog.setUniform("Light[1].Position", glm::vec4(0, 0.15f, -1.0f, 0));
+	prog.setUniform("Light[2].L", glm::vec3(45.0f));
+	prog.setUniform("Light[2].Position", view * glm::vec4(-7, 3, 7, 1));
 }
 
 void SceneBasic_Uniform::compile()
@@ -69,72 +84,40 @@ void SceneBasic_Uniform::compile()
 	}
 }
 
+void SceneBasic_Uniform::drawSpot(const glm::vec3& pos, float rough, int metal, const glm::vec3& colour)
+{
+	model = glm::mat4(1.0f);
+	prog.setUniform("Material.Rough", rough);
+	prog.setUniform("Material.Metal", metal);
+	prog.setUniform("Material.Colour", colour);
+	model = glm::translate(model, pos);
+	model = glm::rotate(model, glm::radians(180.f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	setMatrices();
+	mesh->render();
+}
+
 void SceneBasic_Uniform::update(float t)
 {
 	float deltaT = t - tPrev;
 	if (tPrev == 0.0f)
 		deltaT = 0.0f;
 	tPrev = t;
-	angle += 0.25f * deltaT;
-	if (angle > glm::two_pi<float>())
-		angle -= glm::two_pi<float>();
 
-	if (cameraZ > -3.5f && movingForward) {
-		view = glm::translate(view, vec3(0.0f, 0.0f, -0.01f));
-		cameraZ = view[3].z;
+	if (animating())
+	{
+		lightAngle = glm::mod(lightAngle + deltaT * lightRotationSpeed, glm::two_pi<float>());
+		lightPos.x = glm::cos(lightAngle) * 7.0f;
+		lightPos.y = 3.0f;
+		lightPos.z = glm::sin(lightAngle) * 7.0f;
 	}
-	else {
-		movingForward = false;
-	}
-
-	if (cameraZ < 4.0f && !movingForward) {
-		view = glm::translate(view, vec3(0.0f, 0.0f, 0.01f));
-		cameraZ = view[3].z;
-	}
-	else {
-		movingForward = true;
-	}
-
 }
 
 void SceneBasic_Uniform::render()
 {
 	GlCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-
-	vec4 lightPos = vec4(12.0f * cos(angle), 8.0f, 12.0f * sin(angle), 1.0f);
-	prog.setUniform("PointLight.Position", vec4(lightPos));
-	mat3 normalMatrix = mat3(vec3(view[0]), vec3(view[1]), vec3(view[2]));
-
-	prog.setUniform("Material.Shininess", 100.0f);
-	prog.setUniform("TexIndex", 0);
-	setDiffuseAmbientSpecular("Material", 0.7f, 0.8f, 0.2f);
-
-	for (int i = 0; i < 3; i++)
-	{
-		model = glm::translate(mat4(1.0f), vec3((i * 2.5f), 0.0f, -2.0f - (8.0f * (i % 2))));
-		model = glm::rotate(model, glm::radians(i * -90.0f), vec3(0.0f, 1.0f, 0.0f));
-		setMatrices();
-		wall->render();
-	}
-
-	setDiffuseAmbientSpecular("Material", 0.8f, 0.9f, 0.4f);
-	prog.setUniform("Material.Shininess", 180.0f);
-	prog.setUniform("TexIndex", 1);
-
-	RenderBuckets(5);
-
-	setDiffuseAmbientSpecular("Material", 0.5f, 0.6f, 0.2f);
-	prog.setUniform("Material.Shininess", 50.0f);
-	prog.setUniform("TexIndex", 2);
-
-	for (int i = 0; i < 9; i++)
-	{
-		model = glm::translate(mat4(1.0f), vec3(((i % 3) * 20.0f) - 20.0f, 0.0f, (i % 2) * 20.0f));
-		setMatrices();
-		plane.render();
-	}
-
-
+	prog.setUniform("Light[0].Position", view * lightPos);
+	drawScene();
 }
 
 void SceneBasic_Uniform::resize(int w, int h)
@@ -142,7 +125,7 @@ void SceneBasic_Uniform::resize(int w, int h)
 	glViewport(0, 0, w, h);
 	width = w;
 	height = h;
-	projection = glm::perspective(glm::radians(70.0f), (float)w / h,
+	projection = glm::perspective(glm::radians(60.0f), (float)width / height,
 		0.3f, 100.0f);
 }
 
@@ -150,34 +133,73 @@ void SceneBasic_Uniform::setMatrices()
 {
 	mat4 mv = view * model;
 	prog.setUniform("ModelViewMatrix", mv);
-	prog.setUniform("NormalMatrix", glm::mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));
+	prog.setUniform("NormalMatrix", glm::mat3(mv));
 	prog.setUniform("MVP", projection * mv);
-	prog.setUniform("ProjectionMatrix", projection);
 }
 
-void SceneBasic_Uniform::RenderBuckets(int number)
+void SceneBasic_Uniform::drawScene()
 {
-	for (int i = 0; i < number; i++)
+	drawFloor();
+
+	int numCows = 9;
+
+	glm::vec3 cowBaseColor(0.1f, 0.33f, 0.97f);
+	for (int i = 0;i < numCows; i++)
 	{
-		model = glm::scale(mat4(1.0f), vec3(3.0f, 3.0f, 3.0f));
-		model = glm::translate(model, vec3(0.6f + (0.6f * (i % 2)), 0.0f, i * -0.75f));
-		setMatrices();
-		bucket->render();
+		float cowX = i * (10.0f / (numCows - 1)) - 5.0f;
+		float rough = (i + 1) * (1.0f / numCows);
+		drawSpot(glm::vec3(cowX, 0, 0), rough, 0, cowBaseColor);
 	}
+
+	// Draw metal cows
+	float metalRough = 0.5f;
+	//Gold
+	drawSpot(glm::vec3(-3.0f, 0.0f, 3.0f), metalRough, 1, glm::vec3(1.0f, 0.71f, 0.29f));
+	//Copper
+	drawSpot(glm::vec3(-1.5f, 0.0f, 3.0f), metalRough, 1, glm::vec3(0.95f, 0.64f, 0.54f));
+	//Aluminium
+	drawSpot(glm::vec3(0.0f, 0.0f, 3.0f), metalRough, 1, glm::vec3(0.91f, 0.92f, 0.92f));
+	//Titanium
+	drawSpot(glm::vec3(1.5f, 0.0f, 3.0f), metalRough, 1, glm::vec3(0.542f, 0.497f, 0.449f));
+	//Silver
+	drawSpot(glm::vec3(3.0f, 0.0f, 3.0f), metalRough, 1, glm::vec3(0.95f, 0.93f, 0.88f));
 }
 
-void SceneBasic_Uniform::setDiffuseAmbientSpecular(std::string structure, float dif, float amb, float spec)
+void SceneBasic_Uniform::drawFloor()
 {
-	if (structure == "Material") 
-	{
-		prog.setUniform("Material.Kd", vec3(dif));
-		prog.setUniform("Material.Ka", vec3(amb));
-		prog.setUniform("Material.Ks", vec3(spec));
-	}
-	else if (structure == "PointLight")
-	{
-		prog.setUniform("PointLight.Ld", vec3(dif));
-		prog.setUniform("PointLight.La", vec3(amb));
-		prog.setUniform("PointLight.Ls", vec3(spec));
-	}
+	model = glm::mat4(1.0f);
+	prog.setUniform("Material.Rough", 0.9f);
+	prog.setUniform("Material.Metal", 0);
+	prog.setUniform("Material.Colour", glm::vec3(0.2f));
+	model = glm::translate(model, glm::vec3(0.0f, -0.75f, 0.0f));
+
+	setMatrices();
+	plane.render();
 }
+
+//void SceneBasic_Uniform::RenderBuckets(int number)
+//{
+//	for (int i = 0; i < number; i++)
+//	{
+//		model = glm::scale(mat4(1.0f), vec3(3.0f, 3.0f, 3.0f));
+//		model = glm::translate(model, vec3(0.6f + (0.6f * (i % 2)), 0.0f, i * -0.75f));
+//		setMatrices();
+//		bucket->render();
+//	}
+//}
+
+//void SceneBasic_Uniform::setDiffuseAmbientSpecular(std::string structure, float dif, float amb, float spec)
+//{
+//	if (structure == "Material")
+//	{
+//		prog.setUniform("Material.Kd", vec3(dif));
+//		prog.setUniform("Material.Ka", vec3(amb));
+//		prog.setUniform("Material.Ks", vec3(spec));
+//	}
+//	else if (structure == "PointLight")
+//	{
+//		prog.setUniform("PointLight.Ld", vec3(dif));
+//		prog.setUniform("PointLight.La", vec3(amb));
+//		prog.setUniform("PointLight.Ls", vec3(spec));
+//	}
+//}

@@ -15,22 +15,30 @@ class SceneBasic_Uniform : public Scene
 {
 private:
     GLSLProgram prog;
+
     Plane plane;
-    std::unique_ptr<ObjMesh> wall;
-    std::unique_ptr<ObjMesh> bucket;
+    std::unique_ptr<ObjMesh> mesh;
+    //std::unique_ptr<ObjMesh> bucket;
 
-    unsigned int stoneTex;
-    unsigned int mossTex;
-    unsigned int metalTex;
-    unsigned int grassTex;
+    //unsigned int stoneTex;
+    //unsigned int mossTex;
+    //unsigned int metalTex;
+    //unsigned int grassTex;
 
-    float cameraZ;
-    float angle;
-    float tPrev;
+    float tPrev, lightAngle, lightRotationSpeed;
+    glm::vec4 lightPos;
 
-    bool movingForward;
+    //float cameraZ;
+    //float angle;
+    //float tPrev;
 
+    //bool movingForward;
+
+    void setMatrices();
+    void drawScene();
+    void drawFloor();
     void compile();
+    void drawSpot(const glm::vec3& pos, float rough, int metal, const glm::vec3& colour);
 
 public:
     SceneBasic_Uniform();
@@ -39,9 +47,8 @@ public:
     void update( float t );
     void render();
     void resize(int, int);
-    void setMatrices();
-    void RenderBuckets(int);
-    void setDiffuseAmbientSpecular(std::string structure, float dif, float amb, float spec);
+    //void RenderBuckets(int);
+    //void setDiffuseAmbientSpecular(std::string structure, float dif, float amb, float spec);
 };
 
 #endif // SCENEBASIC_UNIFORM_H
