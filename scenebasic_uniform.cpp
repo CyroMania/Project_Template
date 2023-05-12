@@ -21,12 +21,11 @@ using glm::vec4;
 using glm::mat3;
 using glm::mat4;
 
-SceneBasic_Uniform::SceneBasic_Uniform() : plane(20.0f, 20.0f, 1, 1), lightPos(5.0f, 5.0f, 5.0f, 1.0f), tPrev(0.0f)
+SceneBasic_Uniform::SceneBasic_Uniform() : plane(40.0f, 40.0f, 1, 1), lightPos(5.0f, 5.0f, 5.0f, 1.0f), tPrev(0.0f)
 {
-	mesh = ObjMesh::load("../Project_Template/media/spot/spot_triangulated.obj");
-
-	//wall = ObjMesh::load("media/model/wall.obj", false, false);
-	//bucket = ObjMesh::load("media/model/bucket.obj", false, true);
+	mesh = ObjMesh::load("media/spot/spot_triangulated.obj");
+	wall = ObjMesh::load("media/model/wall.obj", false, false);
+	bucket = ObjMesh::load("media/model/bucket.obj", false, true);
 
 	//stoneTex = Texture::loadTexture("media/texture/highresWall.jpg");
 	//mossTex = Texture::loadTexture("media/texture/moss.png");
@@ -141,28 +140,30 @@ void SceneBasic_Uniform::drawScene()
 {
 	drawFloor();
 
-	int numCows = 9;
+	//int numCows = 9;
 
-	glm::vec3 cowBaseColor(0.1f, 0.33f, 0.97f);
-	for (int i = 0;i < numCows; i++)
-	{
-		float cowX = i * (10.0f / (numCows - 1)) - 5.0f;
-		float rough = (i + 1) * (1.0f / numCows);
-		drawSpot(glm::vec3(cowX, 0, 0), rough, 0, cowBaseColor);
-	}
+	//glm::vec3 cowBaseColor(0.1f, 0.33f, 0.97f);
+	//for (int i = 0;i < numCows; i++)
+	//{
+	//	float cowX = i * (10.0f / (numCows - 1)) - 5.0f;
+	//	float rough = (i + 1) * (1.0f / numCows);
+	//	drawSpot(glm::vec3(cowX, 0, 0), rough, 0, cowBaseColor);
+	//}
 
 	// Draw metal cows
-	float metalRough = 0.5f;
-	//Gold
-	drawSpot(glm::vec3(-3.0f, 0.0f, 3.0f), metalRough, 1, glm::vec3(1.0f, 0.71f, 0.29f));
-	//Copper
-	drawSpot(glm::vec3(-1.5f, 0.0f, 3.0f), metalRough, 1, glm::vec3(0.95f, 0.64f, 0.54f));
-	//Aluminium
-	drawSpot(glm::vec3(0.0f, 0.0f, 3.0f), metalRough, 1, glm::vec3(0.91f, 0.92f, 0.92f));
-	//Titanium
-	drawSpot(glm::vec3(1.5f, 0.0f, 3.0f), metalRough, 1, glm::vec3(0.542f, 0.497f, 0.449f));
-	//Silver
-	drawSpot(glm::vec3(3.0f, 0.0f, 3.0f), metalRough, 1, glm::vec3(0.95f, 0.93f, 0.88f));
+	//float metalRough = 0.5f;
+	////Gold
+	//drawSpot(glm::vec3(-3.0f, 0.0f, 3.0f), metalRough, 1, glm::vec3(1.0f, 0.71f, 0.29f));
+	////Copper
+	//drawSpot(glm::vec3(-1.5f, 0.0f, 3.0f), metalRough, 1, glm::vec3(0.95f, 0.64f, 0.54f));
+	////Aluminium
+	//drawSpot(glm::vec3(0.0f, 0.0f, 3.0f), metalRough, 1, glm::vec3(0.91f, 0.92f, 0.92f));
+	////Titanium
+	//drawSpot(glm::vec3(1.5f, 0.0f, 3.0f), metalRough, 1, glm::vec3(0.542f, 0.497f, 0.449f));
+	////Silver
+	//drawSpot(glm::vec3(3.0f, 0.0f, 3.0f), metalRough, 1, glm::vec3(0.95f, 0.93f, 0.88f));
+
+	drawBuckets(5, 0.5f, 1, vec3(0.1f, 0.1f, 0.1f));
 }
 
 void SceneBasic_Uniform::drawFloor()
@@ -177,16 +178,20 @@ void SceneBasic_Uniform::drawFloor()
 	plane.render();
 }
 
-//void SceneBasic_Uniform::RenderBuckets(int number)
-//{
-//	for (int i = 0; i < number; i++)
-//	{
-//		model = glm::scale(mat4(1.0f), vec3(3.0f, 3.0f, 3.0f));
-//		model = glm::translate(model, vec3(0.6f + (0.6f * (i % 2)), 0.0f, i * -0.75f));
-//		setMatrices();
-//		bucket->render();
-//	}
-//}
+void SceneBasic_Uniform::drawBuckets(int number, float rough, int metal, const glm::vec3& colour)
+{
+	prog.setUniform("Material.Rough", 0.5f);
+	prog.setUniform("Material.Metal", 1);
+	prog.setUniform("Material.Colour", glm::vec3(0.1f));
+
+	for (int i = 0; i < number; i++)
+	{
+		model = glm::scale(mat4(1.0f), vec3(3.0f, 3.0f, 3.0f));
+		model = glm::translate(model, vec3((0.6f * (i % 2)), 0.0f, i * -0.75f));
+		setMatrices();
+		bucket->render();
+	}
+}
 
 //void SceneBasic_Uniform::setDiffuseAmbientSpecular(std::string structure, float dif, float amb, float spec)
 //{

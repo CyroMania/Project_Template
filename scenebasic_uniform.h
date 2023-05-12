@@ -18,7 +18,8 @@ private:
 
     Plane plane;
     std::unique_ptr<ObjMesh> mesh;
-    //std::unique_ptr<ObjMesh> bucket;
+    std::unique_ptr<ObjMesh> wall;
+    std::unique_ptr<ObjMesh> bucket;
 
     //unsigned int stoneTex;
     //unsigned int mossTex;
@@ -32,7 +33,7 @@ private:
     //float angle;
     //float tPrev;
 
-    //bool movingForward;
+    bool movingForward;
 
     void setMatrices();
     void drawScene();
@@ -47,7 +48,7 @@ public:
     void update( float t );
     void render();
     void resize(int, int);
-    //void RenderBuckets(int);
+    void drawBuckets(int number, float rough, int metal, const glm::vec3& colour);
     //void setDiffuseAmbientSpecular(std::string structure, float dif, float amb, float spec);
 };
 
