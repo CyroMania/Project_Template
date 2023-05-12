@@ -14,6 +14,7 @@ using std::endl;
 #include "helper/glutils.h"
 #include "helper/texture.h"
 #include "helper/objmesh.h"
+#include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 using glm::vec3;
@@ -21,10 +22,10 @@ using glm::vec4;
 using glm::mat3;
 using glm::mat4;
 
-SceneBasic_Uniform::SceneBasic_Uniform() : plane(40.0f, 40.0f, 1, 1), lightPos(5.0f, 5.0f, 5.0f, 1.0f), tPrev(0.0f)
+SceneBasic_Uniform::SceneBasic_Uniform() : plane(40.0f, 40.0f, 1, 1), lightPos(5.0f, 5.0f, 5.0f, 1.0f), tPrev(0.0f), lightRotationSpeed(0.5f)
 {
 	mesh = ObjMesh::load("media/spot/spot_triangulated.obj");
-	wall = ObjMesh::load("media/model/wall.obj", false, false);
+	wall = ObjMesh::load("media/model/damaged_wall.obj", false, true);
 	bucket = ObjMesh::load("media/model/bucket.obj", false, true);
 
 	//stoneTex = Texture::loadTexture("media/texture/highresWall.jpg");
@@ -51,15 +52,14 @@ void SceneBasic_Uniform::initScene()
 	glEnable(GL_DEPTH_TEST);
 
 	view = glm::lookAt(
-		glm::vec3(0.0f, 3.0f, 7.0f),
+		glm::vec3(0.0f, 2.5f, 7.0f),
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f)
 	);
 
-	projection = glm::perspective(glm::radians(50.0f), (float)width / height, 0.5f, 100.0f);
+	projection = glm::perspective(glm::radians(30.0f), (float)width / height, 0.5f, 100.0f);
 
 	lightAngle = 0.0f;
-	lightRotationSpeed = 1.5f;
 
 	prog.setUniform("Light[0].L", glm::vec3(45.0f));
 	prog.setUniform("Light[0].Position", view * lightPos);
@@ -106,26 +106,12 @@ void SceneBasic_Uniform::update(float t)
 	if (animating())
 	{
 		lightAngle = glm::mod(lightAngle + deltaT * lightRotationSpeed, glm::two_pi<float>());
-		lightPos.x = glm::cos(lightAngle) * 7.0f;
+		lightPos.x = glm::cos(lightAngle) * 9.0f;
 		lightPos.y = 3.0f;
-		lightPos.z = glm::sin(lightAngle) * 7.0f;
+		lightPos.z = glm::sin(lightAngle) * 9.0f;
 	}
 
-	if (cameraZ > -3.5f && movingForward) {
-		view = glm::translate(view, vec3(0.0f, 0.0f, -0.01f));
-		cameraZ = view[3].z;
-	}
-	else {
-		movingForward = false;
-	}
-
-	if (cameraZ < 4.0f && !movingForward) {
-		view = glm::translate(view, vec3(0.0f, 0.0f, 0.01f));
-		cameraZ = view[3].z;
-	}
-	else {
-		movingForward = true;
-	}
+	//handleInput();
 }
 
 void SceneBasic_Uniform::render()
@@ -142,6 +128,22 @@ void SceneBasic_Uniform::resize(int w, int h)
 	height = h;
 	projection = glm::perspective(glm::radians(60.0f), (float)width / height,
 		0.3f, 100.0f);
+}
+
+void SceneBasic_Uniform::drawWalls(float rough, int metal, const glm::vec3& colour)
+{
+	prog.setUniform("Material.Rough", rough);
+	prog.setUniform("Material.Metal", metal);
+	prog.setUniform("Material.Colour", colour);
+
+	for (int i = 0; i < 3; i++)
+	{
+		model = glm::scale(mat4(1.0f), vec3(0.05f));
+		model = glm::translate(model, vec3((i * 60.0f) - 60.0f, 0.0f, -4.0f - (200.0f * (i % 2))));
+		model = glm::rotate(model, glm::radians((i * -90.0f) - 90.0f), vec3(0.0f, 1.0f, 0.0f));
+		setMatrices();
+		wall->render();
+	}
 }
 
 void SceneBasic_Uniform::setMatrices()
@@ -179,7 +181,13 @@ void SceneBasic_Uniform::drawScene()
 	////Silver
 	//drawSpot(glm::vec3(3.0f, 0.0f, 3.0f), metalRough, 1, glm::vec3(0.95f, 0.93f, 0.88f));
 
-	drawBuckets(5, 0.5f, 1, vec3(0.1f, 0.1f, 0.1f));
+	//prog.setUniform("Material.Shininess", 100.0f);
+	prog.setUniform("TexIndex", 0);
+	//setDiffuseAmbientSpecular("Material", 0.7f, 0.8f, 0.2f);
+
+	drawWalls(0.7f, 0, vec3(0.3f));
+
+	drawBuckets(5, 0.5f, 1, vec3(0.1f));
 }
 
 void SceneBasic_Uniform::drawFloor()
@@ -187,7 +195,7 @@ void SceneBasic_Uniform::drawFloor()
 	model = glm::mat4(1.0f);
 	prog.setUniform("Material.Rough", 0.9f);
 	prog.setUniform("Material.Metal", 0);
-	prog.setUniform("Material.Colour", glm::vec3(0.2f));
+	prog.setUniform("Material.Colour", glm::vec3(0.1f, 0.3f, 0.1f));
 	model = glm::translate(model, glm::vec3(0.0f, -0.75f, 0.0f));
 
 	setMatrices();
@@ -207,6 +215,11 @@ void SceneBasic_Uniform::drawBuckets(int number, float rough, int metal, const g
 		setMatrices();
 		bucket->render();
 	}
+}
+
+void SceneBasic_Uniform::handleInput(GLFWwindow* window)
+{
+	int forward = glfwGetKey(window, GLFW_KEY_W | GLFW_KEY_UP);
 }
 
 //void SceneBasic_Uniform::setDiffuseAmbientSpecular(std::string structure, float dif, float amb, float spec)
