@@ -40,3 +40,5 @@
 x64/Debug/*
 .vs/Project_Template/FileContentInde/*.vsidx
 .vs/Project_Template/v17/*
+.vs/Project_Template/v17/*.suo
+.vs/Project_Template/v17/*.db
