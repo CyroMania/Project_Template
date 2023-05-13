@@ -4,6 +4,7 @@
 #include "helper/scene.h"
 #include "helper/plane.h"
 #include "helper/objmesh.h"
+#include "helper/frustum.h"
 
 #include <glad/glad.h>
 #include "helper/glslprogram.h"
@@ -26,14 +27,15 @@ private:
     //unsigned int metalTex;
     //unsigned int grassTex;
 
+    int shadowMapWidth, shadowMapHeight;
+
+    glm::mat4 lightPV, shadowBias;
+
+    Frustum lightFrustum;
+    float angle;
+
     float tPrev, lightAngle, lightRotationSpeed;
     glm::vec4 lightPos;
-
-    float cameraZ;
-    //float angle;
-    //float tPrev;
-
-    bool movingForward;
 
     void setMatrices();
     void drawScene();
