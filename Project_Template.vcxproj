@@ -162,6 +162,8 @@
   <ItemGroup>
     <None Include="shader\basic_uniform.frag" />
     <None Include="shader\basic_uniform.vert" />
+    <None Include="shader\solid.fs" />
+    <None Include="shader\solid.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="errorhandling.h" />

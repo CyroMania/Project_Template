@@ -22,8 +22,8 @@ using glm::vec4;
 using glm::mat3;
 using glm::mat4;
 
-SceneBasic_Uniform::SceneBasic_Uniform() : plane(40.0f, 40.0f, 1, 1), lightPos(5.0f, 5.0f, 5.0f, 1.0f), tPrev(0.0f), lightRotationSpeed(0.5f), 
-											shadowMapWidth(512), shadowMapHeight(512)
+SceneBasic_Uniform::SceneBasic_Uniform() : plane(40.0f, 40.0f, 1, 1), lightPos(5.0f, 5.0f, 5.0f, 1.0f), tPrev(0.0f), lightRotationSpeed(0.3f),
+shadowMapWidth(512), shadowMapHeight(512)
 {
 	mesh = ObjMesh::load("media/spot/spot_triangulated.obj");
 	wall = ObjMesh::load("media/model/damaged_wall.obj", false, true);
@@ -62,12 +62,15 @@ void SceneBasic_Uniform::initScene()
 
 	lightAngle = 0.0f;
 
-	prog.setUniform("Light[0].Intensity", glm::vec3(45.0f));
-	prog.setUniform("Light[0].Position", view * lightPos);
-	prog.setUniform("Light[1].Intensity", glm::vec3(0.3f));
-	prog.setUniform("Light[1].Position", glm::vec4(0, 0.15f, -1.0f, 0));
-	prog.setUniform("Light[2].Intensity", glm::vec3(45.0f));
-	prog.setUniform("Light[2].Position", view * glm::vec4(-7, 3, 7, 1));
+	prog.setUniform("Light.Intensity", vec3(90.0f));
+	prog.setUniform("Light.La", vec3(0.9f));
+	prog.setUniform("Light.Ld", vec3(0.85f));
+	prog.setUniform("Light.Ls", vec3(0.85f));
+	prog.setUniform("Light.Position", view * lightPos);
+	//prog.setUniform("Light[1].Intensity", glm::vec3(0.3f));
+	//prog.setUniform("Light[1].Position", glm::vec4(0, 0.15f, -1.0f, 0));
+	//prog.setUniform("Light[2].Intensity", glm::vec3(45.0f));
+	//prog.setUniform("Light[2].Position", view * glm::vec4(-7, 3, 7, 1));
 
 	setupFBO();
 
@@ -79,7 +82,7 @@ void SceneBasic_Uniform::initScene()
 	shadowBias = mat4(vec4(0.5f, 0.0f, 0.0f, 0.0f),
 		vec4(0.0f, 0.5f, 0.0f, 0.0f),
 		vec4(0.0f, 0.0f, 0.5, 0.0f),
-		vec4(0.5, 0.5, 0.5f, 1.0f)); 
+		vec4(0.5, 0.5, 0.5f, 1.0f));
 
 	lightPos = vec4(glm::cos(lightAngle) * 9.0f, 3.0f, glm::sin(lightAngle) * 9.0f, 1.0f);
 	lightFrustum.orient(lightPos, vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
@@ -132,9 +135,10 @@ void SceneBasic_Uniform::update(float t)
 	if (animating())
 	{
 		lightAngle = glm::mod(lightAngle + deltaT * lightRotationSpeed, glm::two_pi<float>());
-		lightPos.x = glm::cos(lightAngle) * 9.0f;
-		lightPos.y = 3.0f;
-		lightPos.z = glm::sin(lightAngle) * 9.0f;
+		//lightPos.x = glm::cos(lightAngle) * 9.0f;
+		//lightPos.y = 3.0f;
+		//lightPos.z = glm::sin(lightAngle) * 9.0f;
+		lightFrustum.orient(lightPos, vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
 	}
 }
 
@@ -162,11 +166,15 @@ void SceneBasic_Uniform::render()
 
 
 	//Pass 2 (render)
-	prog.setUniform("Light[0].Position", view * lightPos);
+	//prog.setUniform("Light[0].Position", view * lightPos);
 	float c = 2.0f;
 	vec3 cameraPos(c * 11.5f * cos(lightAngle), c * 7.0f, c * 11.5f * sin(lightAngle));
 	view = glm::lookAt(cameraPos, vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
-	prog.setUniform("Light[0.Position", view * vec4(lightFrustum.getOrigin(), 1.0f));
+	prog.setUniform("Light.Position", view * vec4(lightFrustum.getOrigin(), 1.0f));
+	prog.setUniform("Light.Intensity", vec3(90.0f));
+	prog.setUniform("Light.La", vec3(0.9f));
+	prog.setUniform("Light.Ld", vec3(0.85f));
+	prog.setUniform("Light.Ls", vec3(0.85f));
 	projection = glm::perspective(glm::radians(50.0f), (float)width / height, 0.1f, 100.0f);
 
 	GlCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
@@ -177,7 +185,7 @@ void SceneBasic_Uniform::render()
 
 	//draw the lights frustum
 	solidProg.use();
-	solidProg.setUniform("Color", vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	solidProg.setUniform("Colour", vec4(1.0f, 0.0f, 0.0f, 1.0f));
 	mat4 mv = view * lightFrustum.getInverseViewMatrix();
 	solidProg.setUniform("MVP", projection * mv);
 	lightFrustum.render();
@@ -214,6 +222,7 @@ void SceneBasic_Uniform::setMatrices()
 	prog.setUniform("ModelViewMatrix", mv);
 	prog.setUniform("NormalMatrix", glm::mat3(mv));
 	prog.setUniform("MVP", projection * mv);
+	prog.setUniform("ShadowMatrix", lightPV * model);
 }
 
 void SceneBasic_Uniform::drawScene()
