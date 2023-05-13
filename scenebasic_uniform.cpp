@@ -22,7 +22,8 @@ using glm::vec4;
 using glm::mat3;
 using glm::mat4;
 
-SceneBasic_Uniform::SceneBasic_Uniform() : plane(40.0f, 40.0f, 1, 1), lightPos(5.0f, 5.0f, 5.0f, 1.0f), tPrev(0.0f), lightRotationSpeed(0.5f)
+SceneBasic_Uniform::SceneBasic_Uniform() : plane(40.0f, 40.0f, 1, 1), lightPos(5.0f, 5.0f, 5.0f, 1.0f), tPrev(0.0f), lightRotationSpeed(0.5f), 
+											shadowMapWidth(512), shadowMapHeight(512)
 {
 	mesh = ObjMesh::load("media/spot/spot_triangulated.obj");
 	wall = ObjMesh::load("media/model/damaged_wall.obj", false, true);
@@ -61,12 +62,32 @@ void SceneBasic_Uniform::initScene()
 
 	lightAngle = 0.0f;
 
-	prog.setUniform("Light[0].L", glm::vec3(45.0f));
+	prog.setUniform("Light[0].Intensity", glm::vec3(45.0f));
 	prog.setUniform("Light[0].Position", view * lightPos);
-	prog.setUniform("Light[1].L", glm::vec3(0.3f));
+	prog.setUniform("Light[1].Intensity", glm::vec3(0.3f));
 	prog.setUniform("Light[1].Position", glm::vec4(0, 0.15f, -1.0f, 0));
-	prog.setUniform("Light[2].L", glm::vec3(45.0f));
+	prog.setUniform("Light[2].Intensity", glm::vec3(45.0f));
 	prog.setUniform("Light[2].Position", view * glm::vec4(-7, 3, 7, 1));
+
+	setupFBO();
+
+	unsigned int progHandle = prog.getHandle();
+
+	pass1Index = glGetSubroutineIndex(progHandle, GL_FRAGMENT_SHADER, "recordDepth");
+	pass2Index = glGetSubroutineIndex(progHandle, GL_FRAGMENT_SHADER, "shadeWithShadow");
+
+	shadowBias = mat4(vec4(0.5f, 0.0f, 0.0f, 0.0f),
+		vec4(0.0f, 0.5f, 0.0f, 0.0f),
+		vec4(0.0f, 0.0f, 0.5, 0.0f),
+		vec4(0.5, 0.5, 0.5f, 1.0f)); 
+
+	lightPos = vec4(glm::cos(lightAngle) * 9.0f, 3.0f, glm::sin(lightAngle) * 9.0f, 1.0f);
+	lightFrustum.orient(lightPos, vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
+	lightFrustum.setPerspective(50.0f, 1.0f, 1.0f, 25.0f);
+
+	lightPV = shadowBias * lightFrustum.getProjectionMatrix() * lightFrustum.getViewMatrix();
+
+	prog.setUniform("ShadowMap", 0);
 }
 
 void SceneBasic_Uniform::compile()
@@ -76,6 +97,11 @@ void SceneBasic_Uniform::compile()
 		prog.compileShader("shader/basic_uniform.frag");
 		prog.link();
 		prog.use();
+
+		// Used when rendering light frustum
+		solidProg.compileShader("shader/solid.vs", GLSLShader::VERTEX);
+		solidProg.compileShader("shader/solid.fs", GLSLShader::FRAGMENT);
+		solidProg.link();
 	}
 	catch (GLSLProgramException& e) {
 		cerr << e.what() << endl;
@@ -118,9 +144,43 @@ void SceneBasic_Uniform::moveCamera(const glm::vec3& movement) {
 
 void SceneBasic_Uniform::render()
 {
-	GlCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-	prog.setUniform("Light[0].Position", view * lightPos);
+	prog.use();
+	//Pass 1 (shadow map)
+	view = lightFrustum.getViewMatrix();
+	projection = lightFrustum.getProjectionMatrix();
+	GlCall(glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO));
+	GlCall(glClear(GL_DEPTH_BUFFER_BIT));
+	GlCall(glViewport(0, 0, shadowMapWidth, shadowMapHeight));
+	GlCall(glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &pass1Index));
+	GlCall(glEnable(GL_CULL_FACE));
+	GlCall(glCullFace(GL_FRONT));
+	GlCall(glEnable(GL_POLYGON_OFFSET_FILL));
+	GlCall(glPolygonOffset(2.5f, 10.0f));
 	drawScene();
+	GlCall(glCullFace(GL_BACK));
+	GlCall(glFlush());
+
+
+	//Pass 2 (render)
+	prog.setUniform("Light[0].Position", view * lightPos);
+	float c = 2.0f;
+	vec3 cameraPos(c * 11.5f * cos(lightAngle), c * 7.0f, c * 11.5f * sin(lightAngle));
+	view = glm::lookAt(cameraPos, vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
+	prog.setUniform("Light[0.Position", view * vec4(lightFrustum.getOrigin(), 1.0f));
+	projection = glm::perspective(glm::radians(50.0f), (float)width / height, 0.1f, 100.0f);
+
+	GlCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	GlCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+	GlCall(glViewport(0, 0, width, height));
+	GlCall(glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &pass2Index));
+	drawScene();
+
+	//draw the lights frustum
+	solidProg.use();
+	solidProg.setUniform("Color", vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	mat4 mv = view * lightFrustum.getInverseViewMatrix();
+	solidProg.setUniform("MVP", projection * mv);
+	lightFrustum.render();
 }
 
 void SceneBasic_Uniform::resize(int w, int h)
@@ -159,33 +219,6 @@ void SceneBasic_Uniform::setMatrices()
 void SceneBasic_Uniform::drawScene()
 {
 	drawFloor();
-
-	//int numCows = 9;
-
-	//glm::vec3 cowBaseColor(0.1f, 0.33f, 0.97f);
-	//for (int i = 0;i < numCows; i++)
-	//{
-	//	float cowX = i * (10.0f / (numCows - 1)) - 5.0f;
-	//	float rough = (i + 1) * (1.0f / numCows);
-	//	drawSpot(glm::vec3(cowX, 0, 0), rough, 0, cowBaseColor);
-	//}
-
-	// Draw metal cows
-	//float metalRough = 0.5f;
-	////Gold
-	//drawSpot(glm::vec3(-3.0f, 0.0f, 3.0f), metalRough, 1, glm::vec3(1.0f, 0.71f, 0.29f));
-	////Copper
-	//drawSpot(glm::vec3(-1.5f, 0.0f, 3.0f), metalRough, 1, glm::vec3(0.95f, 0.64f, 0.54f));
-	////Aluminium
-	//drawSpot(glm::vec3(0.0f, 0.0f, 3.0f), metalRough, 1, glm::vec3(0.91f, 0.92f, 0.92f));
-	////Titanium
-	//drawSpot(glm::vec3(1.5f, 0.0f, 3.0f), metalRough, 1, glm::vec3(0.542f, 0.497f, 0.449f));
-	////Silver
-	//drawSpot(glm::vec3(3.0f, 0.0f, 3.0f), metalRough, 1, glm::vec3(0.95f, 0.93f, 0.88f));
-
-	//prog.setUniform("Material.Shininess", 100.0f);
-	prog.setUniform("TexIndex", 0);
-	//setDiffuseAmbientSpecular("Material", 0.7f, 0.8f, 0.2f);
 
 	drawWalls(0.7f, 0, vec3(0.3f));
 

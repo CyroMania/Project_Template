@@ -16,7 +16,10 @@
 class SceneBasic_Uniform : public Scene
 {
 private:
-    GLSLProgram prog;
+    GLSLProgram prog, solidProg;
+
+    unsigned int shadowFBO, pass1Index, pass2Index;
+
     Plane plane;
     std::unique_ptr<ObjMesh> mesh;
     std::unique_ptr<ObjMesh> wall;
@@ -30,9 +33,7 @@ private:
     int shadowMapWidth, shadowMapHeight;
 
     glm::mat4 lightPV, shadowBias;
-
     Frustum lightFrustum;
-    float angle;
 
     float tPrev, lightAngle, lightRotationSpeed;
     glm::vec4 lightPos;

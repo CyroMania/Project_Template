@@ -10,7 +10,7 @@ in vec4 ShadowCoord;
 
 uniform struct LightInfo {
     vec4 Position; //light pos in camera coordinates
-    vec3 L; //intensity
+    vec3 Intensity; //intensity
 } Light[3];
 
 uniform struct MaterialInfo {
