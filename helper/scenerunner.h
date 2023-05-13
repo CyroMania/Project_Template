@@ -125,9 +125,29 @@ private:
             glfwSwapBuffers(window);
 
             glfwPollEvents();
-			int state = glfwGetKey(window, GLFW_KEY_SPACE);
-			if (state == GLFW_PRESS)
-				scene.animate(!scene.animating());
+            int state = glfwGetKey(window, GLFW_KEY_SPACE);
+            if (state == GLFW_PRESS)
+                scene.animate(!scene.animating());
+
+            int forward = glfwGetKey(window, GLFW_KEY_W);
+            if (forward == GLFW_PRESS ) {
+                scene.moveCamera(glm::vec3(0.0f, 0.0f, forward / 100.0f));
+            }
+
+            int backward = glfwGetKey(window, GLFW_KEY_S);
+            if (backward == GLFW_PRESS) {
+                scene.moveCamera(glm::vec3(0.0f, 0.0f, -backward / 100.0f));
+            }
+
+            int left = glfwGetKey(window, GLFW_KEY_A);
+            if (left == GLFW_PRESS) {
+                scene.moveCamera(glm::vec3(left / 100.0f, 0.0f, 0.0f));
+            }
+
+            int right = glfwGetKey(window, GLFW_KEY_D);
+            if (right == GLFW_PRESS) {
+                scene.moveCamera(glm::vec3(-right / 100.0f, 0.0f, 0.0f));
+            }
         }
     }
 };

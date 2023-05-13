@@ -16,7 +16,6 @@ class SceneBasic_Uniform : public Scene
 {
 private:
     GLSLProgram prog;
-    GLFWwindow* window;
     Plane plane;
     std::unique_ptr<ObjMesh> mesh;
     std::unique_ptr<ObjMesh> wall;
@@ -43,11 +42,11 @@ private:
     void drawSpot(const glm::vec3& pos, float rough, int metal, const glm::vec3& colour);
     void drawWalls(float rough, int metal, const glm::vec3& colour);
     void drawBuckets(int number, float rough, int metal, const glm::vec3& colour);
-    void handleInput(GLFWwindow* window);
+
 public:
     SceneBasic_Uniform();
-
-    void initScene(GLFWwindow* window);
+    void moveCamera(const glm::vec3& movement);
+    void initScene();
     void update( float t );
     void render();
     void resize(int, int);

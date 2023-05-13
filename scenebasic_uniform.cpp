@@ -110,8 +110,10 @@ void SceneBasic_Uniform::update(float t)
 		lightPos.y = 3.0f;
 		lightPos.z = glm::sin(lightAngle) * 9.0f;
 	}
+}
 
-	//handleInput();
+void SceneBasic_Uniform::moveCamera(const glm::vec3& movement) {
+	view = glm::translate(view, movement);
 }
 
 void SceneBasic_Uniform::render()
@@ -215,11 +217,6 @@ void SceneBasic_Uniform::drawBuckets(int number, float rough, int metal, const g
 		setMatrices();
 		bucket->render();
 	}
-}
-
-void SceneBasic_Uniform::handleInput(GLFWwindow* window)
-{
-	int forward = glfwGetKey(window, GLFW_KEY_W | GLFW_KEY_UP);
 }
 
 //void SceneBasic_Uniform::setDiffuseAmbientSpecular(std::string structure, float dif, float amb, float spec)
