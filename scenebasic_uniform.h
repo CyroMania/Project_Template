@@ -42,6 +42,7 @@ private:
     void drawSpot(const glm::vec3& pos, float rough, int metal, const glm::vec3& colour);
     void drawWalls(float rough, int metal, const glm::vec3& colour);
     void drawBuckets(int number, float rough, int metal, const glm::vec3& colour);
+    void setupFBO();
 
 public:
     SceneBasic_Uniform();

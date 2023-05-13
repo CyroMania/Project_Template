@@ -6,6 +6,7 @@ layout(location = 0) out vec4 FragColour;
 
 in vec3 Position;
 in vec3 Normal;
+in vec4 ShadowCoord;
 
 uniform struct LightInfo {
     vec4 Position; //light pos in camera coordinates
