@@ -86,7 +86,7 @@ void SceneBasic_Uniform::initScene()
 
 	lightPos = vec4(glm::cos(lightAngle) * 9.0f, 3.0f, glm::sin(lightAngle) * 9.0f, 1.0f);
 	lightFrustum.orient(lightPos, vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
-	lightFrustum.setPerspective(50.0f, 1.0f, 1.0f, 25.0f);
+	lightFrustum.setPerspective(80.0f, 1.0f, 1.0f, 180.0f);
 
 	lightPV = shadowBias * lightFrustum.getProjectionMatrix() * lightFrustum.getViewMatrix();
 
@@ -135,15 +135,28 @@ void SceneBasic_Uniform::update(float t)
 	if (animating())
 	{
 		lightAngle = glm::mod(lightAngle + deltaT * lightRotationSpeed, glm::two_pi<float>());
-		//lightPos.x = glm::cos(lightAngle) * 9.0f;
-		//lightPos.y = 3.0f;
-		//lightPos.z = glm::sin(lightAngle) * 9.0f;
+		lightPos.x = glm::cos(lightAngle) * 9.0f;
+		lightPos.y = 3.0f;
+		lightPos.z = glm::sin(lightAngle) * 9.0f;
 		lightFrustum.orient(lightPos, vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
+		//slightFrustum.setPerspective(50.0f, 1.0f, 1.0f, 25.0f);
+
+		lightPV = shadowBias * lightFrustum.getProjectionMatrix() * lightFrustum.getViewMatrix();
 	}
 }
 
-void SceneBasic_Uniform::moveCamera(const glm::vec3& movement) {
-	view = glm::translate(view, movement);
+void SceneBasic_Uniform::moveCamera(const vec3& movement) {
+	lightPos.x += movement.z / 10.0f;
+	lightPos.z += movement.x / 10.0f;
+	lightFrustum.orient(lightPos, vec3(0.0f, -10000.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+	lightPV = shadowBias * lightFrustum.getProjectionMatrix() * lightFrustum.getViewMatrix();
+}
+
+void SceneBasic_Uniform::raiseCamera(float up) {
+	lightPos.y += up;
+
+	lightFrustum.orient(lightPos, vec3(0.0f, -10000.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+	lightPV = shadowBias * lightFrustum.getProjectionMatrix() * lightFrustum.getViewMatrix();
 }
 
 void SceneBasic_Uniform::render()
@@ -171,10 +184,6 @@ void SceneBasic_Uniform::render()
 	vec3 cameraPos(c * 11.5f * cos(lightAngle), c * 7.0f, c * 11.5f * sin(lightAngle));
 	view = glm::lookAt(cameraPos, vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
 	prog.setUniform("Light.Position", view * vec4(lightFrustum.getOrigin(), 1.0f));
-	prog.setUniform("Light.Intensity", vec3(90.0f));
-	prog.setUniform("Light.La", vec3(0.9f));
-	prog.setUniform("Light.Ld", vec3(0.85f));
-	prog.setUniform("Light.Ls", vec3(0.85f));
 	projection = glm::perspective(glm::radians(50.0f), (float)width / height, 0.1f, 100.0f);
 
 	GlCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
@@ -209,7 +218,7 @@ void SceneBasic_Uniform::drawWalls(float rough, int metal, const glm::vec3& colo
 	for (int i = 0; i < 3; i++)
 	{
 		model = glm::scale(mat4(1.0f), vec3(0.05f));
-		model = glm::translate(model, vec3((i * 60.0f) - 60.0f, 0.0f, -4.0f - (200.0f * (i % 2))));
+		model = glm::translate(model, vec3((i * 60.0f) - 60.0f, -10.0f, -4.0f - (200.0f * (i % 2))));
 		model = glm::rotate(model, glm::radians((i * -90.0f) - 90.0f), vec3(0.0f, 1.0f, 0.0f));
 		setMatrices();
 		wall->render();
@@ -229,7 +238,7 @@ void SceneBasic_Uniform::drawScene()
 {
 	drawFloor();
 
-	drawWalls(0.7f, 0, vec3(0.3f));
+	drawWalls(0.7f, 0, vec3(0.3f, 0.4f, 0.5f));
 
 	drawBuckets(5, 0.5f, 1, vec3(0.1f));
 }
@@ -295,24 +304,8 @@ void SceneBasic_Uniform::drawBuckets(int number, float rough, int metal, const g
 	for (int i = 0; i < number; i++)
 	{
 		model = glm::scale(mat4(1.0f), vec3(3.0f, 3.0f, 3.0f));
-		model = glm::translate(model, vec3((0.6f * (i % 2)), 0.0f, i * -0.75f));
+		model = glm::translate(model, vec3((0.6f * (i % 2)), -0.25f, i * -0.75f));
 		setMatrices();
 		bucket->render();
 	}
 }
-
-//void SceneBasic_Uniform::setDiffuseAmbientSpecular(std::string structure, float dif, float amb, float spec)
-//{
-//	if (structure == "Material")
-//	{
-//		prog.setUniform("Material.Kd", vec3(dif));
-//		prog.setUniform("Material.Ka", vec3(amb));
-//		prog.setUniform("Material.Ks", vec3(spec));
-//	}
-//	else if (structure == "PointLight")
-//	{
-//		prog.setUniform("PointLight.Ld", vec3(dif));
-//		prog.setUniform("PointLight.La", vec3(amb));
-//		prog.setUniform("PointLight.Ls", vec3(spec));
-//	}
-//}

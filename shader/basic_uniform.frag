@@ -114,18 +114,18 @@ void shadeWithShadow()
     FragColour = vec4(diffAndSpec * shadow + ambient, 1.0);
 
     //Gamma correct
-    vec4 shadowFactor = pow(FragColour, vec4(1.0/2.2));
+    vec4 occlusionMap = pow(FragColour, vec4(1.0/2.2));
 
-    vec3 sum = vec3(0.0);
+    //vec3 sum = vec3(0.0);
     vec3 n = normalize(Normal);
     //for (int i = 0; i < 3; i++) {
-    sum = microfacetModel(Position, n);
+    vec3 sum = microfacetModel(Position, n);
     //}
 
     // Gamma
     sum = pow(sum, vec3(1.0/2.2));
 
-    FragColour = vec4(sum * shadowFactor.xyz, 1.0);
+    FragColour = vec4(sum * occlusionMap.xyz, 1.0);
 }
 
 subroutine (RenderPassType)

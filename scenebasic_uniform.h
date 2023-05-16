@@ -50,6 +50,7 @@ private:
 public:
     SceneBasic_Uniform();
     void moveCamera(const glm::vec3& movement);
+    void raiseCamera(float up);
     void initScene();
     void update( float t );
     void render();

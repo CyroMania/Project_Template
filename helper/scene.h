@@ -45,6 +45,11 @@ public:
      */
     virtual void moveCamera(const glm::vec3& movement) = 0;
 
+    /**
+     Called when camera is risen
+     */
+    virtual void raiseCamera(float up) = 0;
+
     void animate( bool value ) { m_animate = value; }
     bool animating() { return m_animate; }
     
