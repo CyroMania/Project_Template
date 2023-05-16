@@ -42,3 +42,5 @@ x64/Debug/*
 .vs/Project_Template/v17/*
 .vs/Project_Template/v17/*.suo
 .vs/Project_Template/v17/*.db
+.vs/Project_Template/v17/Browse.VC.db
+.vs/Project_Template/v17/.suo
