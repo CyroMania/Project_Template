@@ -125,9 +125,40 @@ private:
             glfwSwapBuffers(window);
 
             glfwPollEvents();
-			int state = glfwGetKey(window, GLFW_KEY_SPACE);
-			if (state == GLFW_PRESS)
-				scene.animate(!scene.animating());
+            int state = glfwGetKey(window, GLFW_KEY_P);
+            if (state == GLFW_PRESS)
+                scene.animate(!scene.animating());
+
+            //Input stated here for moving the light and frustum
+            int forward = glfwGetKey(window, GLFW_KEY_W);
+            if (forward == GLFW_PRESS) {
+                scene.moveCamera(glm::vec3(0.0f, 0.0f, -forward));
+            }
+
+            int backward = glfwGetKey(window, GLFW_KEY_S);
+            if (backward == GLFW_PRESS) {
+                scene.moveCamera(glm::vec3(0.0f, 0.0f, backward));
+            }
+
+            int left = glfwGetKey(window, GLFW_KEY_A);
+            if (left == GLFW_PRESS) {
+                scene.moveCamera(glm::vec3(left, 0.0f, 0.0f));
+            }
+
+            int right = glfwGetKey(window, GLFW_KEY_D);
+            if (right == GLFW_PRESS) {
+                scene.moveCamera(glm::vec3(-right, 0.0f, 0.0f));
+            }
+
+            int up = glfwGetKey(window, GLFW_KEY_SPACE);
+            if (up == GLFW_PRESS) {
+                scene.raiseCamera(0.3f);
+            }
+
+            int down = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
+            if (down == GLFW_PRESS) {
+                scene.raiseCamera(-0.3f);
+            }
         }
     }
 };

@@ -4,44 +4,59 @@
 #include "helper/scene.h"
 #include "helper/plane.h"
 #include "helper/objmesh.h"
+#include "helper/frustum.h"
 
 #include <glad/glad.h>
 #include "helper/glslprogram.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <GLFW/glfw3.h>
 
 
 class SceneBasic_Uniform : public Scene
 {
 private:
-    GLSLProgram prog;
+    GLSLProgram prog, solidProg;
+
+    unsigned int shadowFBO, pass1Index, pass2Index;
+
     Plane plane;
+    std::unique_ptr<ObjMesh> mesh;
     std::unique_ptr<ObjMesh> wall;
     std::unique_ptr<ObjMesh> bucket;
 
-    unsigned int stoneTex;
-    unsigned int mossTex;
-    unsigned int metalTex;
-    unsigned int grassTex;
+    //unsigned int stoneTex;
+    //unsigned int mossTex;
+    //unsigned int metalTex;
+    //unsigned int grassTex;
 
-    float cameraZ;
-    float angle;
-    float tPrev;
+    int shadowMapWidth, shadowMapHeight;
 
-    bool movingForward;
+    glm::mat4 lightPV, shadowBias;
+    Frustum lightFrustum;
 
+    float tPrev, lightAngle, lightRotationSpeed;
+    glm::vec4 lightPos;
+
+    void setMatrices();
+    void drawScene();
+    void drawFloor();
     void compile();
+    void drawSpot(const glm::vec3& pos, float rough, int metal, const glm::vec3& colour);
+    void drawWalls(float rough, int metal, const glm::vec3& colour);
+    void drawBuckets(int number, float rough, int metal, const glm::vec3& colour);
+    void setupFBO();
 
 public:
     SceneBasic_Uniform();
-
+    void moveCamera(const glm::vec3& movement);
+    void raiseCamera(float up);
     void initScene();
     void update( float t );
     void render();
     void resize(int, int);
-    void setMatrices();
-    void RenderBuckets(int);
-    void setDiffuseAmbientSpecular(std::string structure, float dif, float amb, float spec);
+
+    //void setDiffuseAmbientSpecular(std::string structure, float dif, float amb, float spec);
 };
 
 #endif // SCENEBASIC_UNIFORM_H

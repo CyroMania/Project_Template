@@ -1,4 +1,4 @@
-#include "objmesh.h"
+#include "../helper/objmesh.h"
 #include "utils.h"
 #include "glm/glm.hpp"
 

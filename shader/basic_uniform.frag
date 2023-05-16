@@ -1,84 +1,140 @@
 #version 440
 
-layout (location = 0) out vec4 FragColour;
+const float PI = 3.141592653589793238462;
 
-layout (binding = 0) uniform sampler2D Tex1;
-layout (binding = 1) uniform sampler2D Tex2;
-layout (binding = 2) uniform sampler2D Tex3;
-layout (binding = 3) uniform sampler2D Tex4;
+layout(location = 0) out vec4 FragColour;
 
-in vec4 Position;
+in vec3 Position;
 in vec3 Normal;
-in vec2 TexCoord;
-
-uniform int TexIndex;
+in vec4 ShadowCoord;
 
 uniform struct LightInfo {
-    vec4 Position;
+    vec4 Position; //light pos in camera coordinates
     vec3 La; //ambient
     vec3 Ld; //diffuse
     vec3 Ls; //specular
-} PointLight;
+    vec3 Intensity;
+} Light;
 
 uniform struct MaterialInfo {
-    vec3 Ka; //ambient
-    vec3 Kd; //diffuse
-    vec3 Ks; //specular
-    float Shininess; //shininess factor
+    float Rough; //Roughness
+    bool Metal; //true if Metallic, or false if dielectric
+    vec3 Colour;  //Diffuse colour for dilectrics, f0 for metallic
 } Material;
 
-uniform struct FogInfo {
-    float MaxDist;
-    float MinDist;
-    vec3 Colour;
-} Fog;
+uniform sampler2DShadow ShadowMap;
 
-vec3 blinnPhong(vec4 pos, vec3 n) {
-    vec3 mixedColour = vec3(0.0);
+float ggxDistribution(float nDotH) {
+    float alpha2 = pow(Material.Rough, 4.0);
+    float d = (nDotH * nDotH) * (alpha2 - 1) + 1;
+    return alpha2 / (PI * d * d);
+}
 
-    if (TexIndex == 0) {
-        vec4 stoneColour = texture(Tex1, TexCoord);
-        vec4 mossColour = texture(Tex2, TexCoord);
-        mixedColour = mix(stoneColour.rgb, mossColour.rgb, mossColour.a);
-    }
-    else  if (TexIndex == 1) {
-        vec4 metalColour = texture(Tex3, TexCoord);
-        mixedColour = metalColour.rgb;
-    }
-    else {
-        vec4 grassColour = texture(Tex4, TexCoord);
-        mixedColour = grassColour.rgb;
+float geomSmith(float dotProd) {
+    float k = (Material.Rough + 1.0) * (Material.Rough + 1.0) / 8.0;
+    float denom = dotProd * (1 - k) + k;
+    return 1.0 / denom;
+}
+
+vec3 schlickFresnel(float lDotH) {
+    vec3 f0 = vec3(0.04);
+    
+    if (Material.Metal) {
+        f0 = Material.Colour;
     }
 
-    vec3 ambient = PointLight.La * Material.Ka;
-    vec3 diffuse = vec3(0.0);
-    vec3 specular = vec3(0.0);
-    vec3 s = normalize(vec3(PointLight.Position - (pos * PointLight.Position.w)));
+    return f0 + (1 - f0) * pow(1.0 - lDotH, 5.0);
+}
 
-    float sDotN = max(dot(s,n),0.0);
-    diffuse = PointLight.Ld * Material.Kd * sDotN * mixedColour;
+vec3 blinnPhong(vec3 pos, vec3 n) {
+    vec3 ambient = Light.La * Material.Colour;
+    vec3 s = normalize(vec3(Light.Position) - pos);
+    vec3 v = normalize(-pos.xyz);
+    vec3 r = reflect( -s, n);
+    float sDotN = max(dot(s, n), 0.0);
+    vec3 diffuse = sDotN * Light.Ld * Material.Colour;
+    vec3 spec = vec3(0.0);
 
     if (sDotN > 0.0) {
         vec3 v = normalize(-pos.xyz);
-        vec3 h = normalize(v + s);
-        specular = PointLight.Ls * Material.Ks * pow(max(dot(h,n),0.0), Material.Shininess);
+        vec3 h = normalize(v+s);
+        spec = (Light.Ls * Material.Colour) * pow(max(dot(h,n), 0.0), Material.Rough);
     }
 
-    return ambient + diffuse + specular;
+    return ambient + diffuse + spec;
 }
 
-void main() {
-    float dist = abs( Position.z ); //distance calculations
+vec3 microfacetModel(vec3 position, vec3 n) {
+    vec3 diffuseBrdf = vec3(0.0); //metallic
 
-    //fogFactor calculation based on formula
-    float fogFactor = (Fog.MaxDist - dist) / (Fog.MaxDist - Fog.MinDist);
+    if (!Material.Metal) {
+        diffuseBrdf = Material.Colour;
+    }
 
-    fogFactor = clamp( fogFactor, 0.0, 1.0 ); //we clamp values
+    vec3 l = vec3(0.0);
+    vec3 lightI = Light.Intensity;
 
-    //the colour we get from the main blinnPhong shader
-    vec3 shadeColour = blinnPhong(Position, normalize(Normal));
+    if (Light.Position.w == 0.0) { //Directional Light
+        l = normalize(Light.Position.xyz);
+    }
+    else {                         //Positional Light
+        l = Light.Position.xyz - position;
+        float dist = length(l);
+        l = normalize(l);
+        lightI /= (dist * dist);
+    }
 
-    //we assign a colour based on the fogFactor using mix
-    vec3 Colour = mix(Fog.Colour, shadeColour, fogFactor);
-    FragColour = vec4(Colour, 1.0); //final colour
+    vec3 v = normalize(-position);
+    vec3 h = normalize(v + l); 
+    float nDotH = dot(n, h);
+    float lDotH = dot(l, h);
+    float nDotL = max(dot(n, l), 0.0);
+    float nDotV = dot(n, v);
+    vec3 specBrdf = 0.25 * ggxDistribution(nDotH) * schlickFresnel(lDotH) * geomSmith(nDotL) * geomSmith(nDotV);
+
+    return (diffuseBrdf + PI * specBrdf) * lightI * nDotL;
+}
+
+subroutine void RenderPassType();
+subroutine uniform RenderPassType RenderPass;
+
+subroutine (RenderPassType)
+void shadeWithShadow() 
+{
+    vec3 ambient = Light.La * Material.Colour;
+    vec3 diffAndSpec = blinnPhong(Position, Normal);
+
+    float shadow = 1.0;
+    if (ShadowCoord.z >= 0) 
+    {
+        shadow = textureProj(ShadowMap, ShadowCoord);
+    }
+
+    // If the fragment is in shadow, use ambient light only
+    FragColour = vec4(diffAndSpec * shadow + ambient, 1.0);
+
+    //Gamma correct
+    vec4 occlusionMap = pow(FragColour, vec4(1.0/2.2));
+
+    //vec3 sum = vec3(0.0);
+    vec3 n = normalize(Normal);
+    //for (int i = 0; i < 3; i++) {
+    vec3 sum = microfacetModel(Position, n);
+    //}
+
+    // Gamma
+    sum = pow(sum, vec3(1.0/2.2));
+
+    FragColour = vec4(sum * occlusionMap.xyz, 1.0);
+}
+
+subroutine (RenderPassType)
+void recordDepth()
+{
+    //Do nothing, will be done automatically
+}
+
+void main() 
+{
+    RenderPass();
 }
